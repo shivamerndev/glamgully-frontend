@@ -1,0 +1,26 @@
+@import "tailwindcss";
+/* @plugin "daisyui"; */
+
+#cards::-webkit-scrollbar {
+    display: none;
+}
+
+.marquee-track {
+  display: flex;
+  /* width: max-content; */
+  animation: marquee 5s linear infinite;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+#orderform input{
+  border: 2px solid rgba(14, 14, 14, 0.469);
+  outline-color: rgba(0, 110, 255, 0.748);
+}
