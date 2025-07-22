@@ -13,6 +13,7 @@ import Login from './Admin/Login.jsx'
 import Logout from './Admin/Logout.jsx'
 import CheckoutForm from './pages/CheckoutForm.jsx'
 import OrderSummary from './components/OrderSummary.jsx'
+import Cart from './components/Cart.jsx'
 
 const App = () => {
   const location = useLocation()
@@ -32,6 +33,7 @@ const App = () => {
         <Route path='/checkout/order/:productId' element={<OrderSummary />} />
         <Route path='/category/:productname' element={<CategoryPage />} />
         <Route path='/product/all' element={<CategoryPage />} />
+        <Route path='/cart' element={<Cart/>} />
       </Routes>
     </div>
   )

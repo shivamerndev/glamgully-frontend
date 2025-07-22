@@ -7,5 +7,14 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
     server: {
     host: '0.0.0.0', // 👈 This is important
-  }
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src')
+    }
+  },
+  build: {
+    outDir: 'dist'
+  },
+  base: '/',
 })

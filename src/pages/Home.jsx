@@ -2,11 +2,14 @@ import { useContext, useEffect, useState } from "react";
 import Card from "../components/Card";
 import { Link } from "react-router-dom";
 import { ProductDataContext } from "../context/ProductContext";
+import { MdArrowLeft, MdArrowRight } from "react-icons/md";
+
 
 const Home = () => {
   const { getProducts } = useContext(ProductDataContext)
   const [products, setProducts] = useState(null)
-  const [current, setCurrent] = useState(0);
+  const [current, setcurrent] = useState(0)
+
   useEffect(() => {
     localStorage.removeItem("token")
     getProducts().then((data) => {
@@ -14,6 +17,8 @@ const Home = () => {
     });
   }, []);
   const bannerimg = 'https://images.unsplash.com/photo-1724985974844-146a7076b3b1?q=80&w=1527&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+  const bannerimg2 = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=464&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+  const bannerimg3 = 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
 
   const banners = [
     {
@@ -22,23 +27,37 @@ const Home = () => {
       btn: "Outline"
     },
     {
-      img: bannerimg,
+      img: bannerimg2,
       title: "straight pintrest dreams",
       btn: "Learn more"
     },
     {
-      img: bannerimg,
+      img: bannerimg3,
       title: " out of your pintrest dreams",
       btn: "Buy now"
     }
   ];
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % banners.length);
+    if (current < -200) {
+      setcurrent(0)
+    }
+    else if (current > 0) {
+      setcurrent(-200)
+    }
+  }, [current])
+
+  const [intervalId, setIntervalId] = useState(null);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setcurrent(prev => prev - 100)
     }, 3000);
-    return () => clearInterval(interval);
-  }, [banners.length]);
+    setIntervalId(id);
+    return () => clearInterval(id);
+  }, []);
+
+
 
   return (
     <div className="bg-white min-h-screen w-full text-black">
@@ -46,30 +65,29 @@ const Home = () => {
         <h1>GET Free shipping above ₹599.00</h1>
       </div>
       <main className="w-full h-full ">
-        <div className="flex flex-nowrap overflow-hidden">
 
-          <div className="relative w-full overflow-hidden" style={{ height: "50vh" }}>
-            <div
-              className="flex transition-transform duration-700 ease-in-out"
-              style={{
-                width: `${banners.length * 100}%`,
-                transform: `translateX(-${current * (100 / banners.length)}%)`
-              }}>
-              {banners.map((banner, idx) => (
-                <div
+        <div className="relative flex flex-nowrap w-full h-[50vh] overflow-hidden">
+          <h1 onClick={() => { setcurrent(prev => prev + 100) }} className="absolute left-3 p-1 text-xl text-gray-800 font-semibold rounded-full z-10 bg-[#ffffff5c] top-[40%]"><MdArrowLeft /></h1>
+          {banners.map((e, i) => {
+            return <div key={i} style={{ translate: current + '%' }} className="bg-black transition-all duration-300 ease-in-out  h-full w-full relative shrink-0">
+              <img className="h-full  shrink-0 w-full object-cover object-center opacity-50" src={e.img} alt="" />
+              <h1 className="text-white text-xl absolute px-12  top-[40%] text-center text-shadow-black w-full z-10 capitalize font-semibold backdrop:bg-black ">{e.title}</h1>
+              {/* <h1  className="text-white text-xl absolute px-5 py-1 rounded-2xl left-[40%]  top-[50%] outline  text-center text-shadow-black w-fit z-10 capitalize font-semibold backdrop:bg-black ">{e.btn}</h1> */}
+            </div>
+          })}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+              {banners.map((_, idx) => (
+                <span
                   key={idx}
-                  className="shrink-0 w-full h-[50vh] bg-center bg-cover relative"
-                  style={{ backgroundImage: `url(${banner.img})` }}>
-                  <div className="absolute h-full w-full bg-[#00000094] flex flex-col items-center justify-center text-[21px] text-center font-[tahoma] capitalize font-semibold text-white">
-                    <h1>{banner.title}</h1>
-                    <button className="border px-4 py-1 rounded-2xl mt-4 font-sans text-white">{banner.btn}</button>
-                  </div>
-                </div>
+                  className={`h-2 w-2 rounded-full transition-all  duration-300 ${current / -100 === idx ? 'bg-white p-[5px]' : 'bg-gray-400 opacity-60'}`}
+                  style={{ display: 'inline-block' }}
+                ></span>
               ))}
             </div>
-          </div>
+          <h1 onClick={() => { setcurrent(prev => prev - 100) }} className="absolute right-3 p-1 text-xl text-gray-800 font-semibold rounded-full z-10 bg-[#ffffff5c] top-[40%]"><MdArrowRight /></h1>
 
         </div>
+
         <div id="marquee" className="w-full bg-[#b16431b7] flex overflow-hidden text-xl uppercase font-semibold text-white text-center relative h-12">
           <div className="marquee-track flex">
             <span className=" whitespace-nowrap py-2  px-1">Anti tarnish •  waterproof • skin friendly •</span>

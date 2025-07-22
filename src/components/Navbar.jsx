@@ -3,10 +3,12 @@ import Menubar from './Menubar';
 import { IoIosSearch } from "react-icons/io";
 import { LuShoppingCart } from "react-icons/lu";
 import { RiMenu2Fill } from "react-icons/ri";
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
     const [menu, setmenu] = useState(false);
     const [search, setsearch] = useState(false);
+    const navigate = useNavigate()
     return (
         <>
             {menu && <Menubar setmenu={setmenu} />}
@@ -24,7 +26,7 @@ const Navbar = () => {
                 <img className=" mt-4 h-10 ml-6  " src="/glam_text-removebg-preview.png" alt="logo" />
                 <div className="flex gap-4">
                     <IoIosSearch onClick={() => setsearch(!search)} />
-                    <LuShoppingCart />
+                    <LuShoppingCart onClick={()=>navigate('/cart')} />
                 </div>
             </nav>
         </>
