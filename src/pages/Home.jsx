@@ -49,6 +49,7 @@ const Home = () => {
 
   const [intervalId, setIntervalId] = useState(null);
 
+  
   useEffect(() => {
     const id = setInterval(() => {
       setcurrent(prev => prev - 100)
