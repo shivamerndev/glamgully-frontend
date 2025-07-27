@@ -20,7 +20,7 @@ export const handlePayment = async (amount) => {
         return;
     }
     try {
-        const orderRes = await axios.post("http://localhost:4000/pay/order", {
+        const orderRes = await axios.post("https://glamgully-backend.vercel.app/pay/order", {
             amount: amount * 100, // amount in paise
         });
         const data = orderRes.data.order;
