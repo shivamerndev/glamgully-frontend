@@ -43,7 +43,7 @@ const handlePaymentVerify = (data) => {
         handler: async (response) => {
             console.log("Payment Successful", response);
             try {
-                await axios.post("http://localhost:4000/pay/verify", {
+                await axios.post("https://glamgully-backend.vercel.app/pay/verify", {
                     razorpay_payment_id: response.razorpay_payment_id,
                     razorpay_order_id: response.razorpay_order_id,
                     razorpay_signature: response.razorpay_signature,
