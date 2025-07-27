@@ -9,6 +9,7 @@ const Home = () => {
   const { getProducts } = useContext(ProductDataContext)
   const [products, setProducts] = useState(null)
   const [current, setcurrent] = useState(0)
+  const categories = [...new Set(products?.map(p => p.category))]
 
   useEffect(() => {
     localStorage.removeItem("token")
@@ -49,7 +50,6 @@ const Home = () => {
 
   const [intervalId, setIntervalId] = useState(null);
 
-  
   useEffect(() => {
     const id = setInterval(() => {
       setcurrent(prev => prev - 100)
@@ -58,9 +58,13 @@ const Home = () => {
     return () => clearInterval(id);
   }, []);
 
+  const [scaled, setScaled] = useState(false);
+  useEffect(() => {
+    const timeout = setTimeout(() => setScaled(true), 100); // slight delay for effect
+    return () => clearTimeout(timeout);
+  }, []);
 
-
-  return (
+  return (products ?
     <div className="bg-white min-h-screen w-full text-black">
       <div className="bg-[#bb6024c0] w-full py-1 text-base uppercase font-semibold text-white text-center">
         <h1>GET Free shipping above ₹599.00</h1>
@@ -76,16 +80,16 @@ const Home = () => {
               {/* <h1  className="text-white text-xl absolute px-5 py-1 rounded-2xl left-[40%]  top-[50%] outline  text-center text-shadow-black w-fit z-10 capitalize font-semibold backdrop:bg-black ">{e.btn}</h1> */}
             </div>
           })}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-              {banners.map((_, idx) => (
-                <span
-                  key={idx}
-                  className={`h-2 w-2 rounded-full transition-all  duration-300 ${current / -100 === idx ? 'bg-white p-[5px]' : 'bg-gray-400 opacity-60'}`}
-                  style={{ display: 'inline-block' }}
-                ></span>
-              ))}
-            </div>
-          <h1 onClick={() => { setcurrent(prev => prev - 100) }} className="absolute right-3 p-1 text-xl text-gray-800 font-semibold rounded-full z-10 bg-[#ffffff5c] top-[40%]"><MdArrowRight /></h1>
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+            {banners.map((_, idx) => (
+              <span
+                key={idx}
+                className={`h-2 w-2 rounded-full transition-all  duration-300 ${current / -100 === idx ? 'bg-white p-[5px]' : 'bg-gray-400 opacity-60'}`}
+                style={{ display: 'inline-block' }}
+              ></span>
+            ))}
+          </div>
+          <h1 onClick={() => { setcurrent(prev => prev - 100) }} className="absolute right-3 p-1 text-xl text-gray-800 font-semibold rounded-full bg-[#ffffff5c] top-[40%]"><MdArrowRight /></h1>
 
         </div>
 
@@ -119,30 +123,16 @@ const Home = () => {
           <h1 className="text-3xl my-8 font-semibold" >Category</h1>
           <div className="grid gap-3 grid-cols-2 w-full ">
 
-            <div className=" mb-2 text-center text-xl font-semibold w-full ">
-              <Link to={'/category/products'} className=" inline-block overflow-hidden bg-gray-800 h-50 w-full  rounded-md text-white font-semibold  ">
-                <img className="w-full h-full object-cover" src="/Walletimg.webp" alt="" />
-              </Link>
-              <h1>Wallet</h1>
-            </div>
-            <div className=" mb-2 text-center text-xl font-semibold w-full ">
-              <Link to={'/category/products'} className=" inline-block overflow-hidden bg-gray-800 h-50 w-full  rounded-md text-white font-semibold  ">
-                <img className="w-full h-full object-cover" src="/wallet2.webp" alt="" />
-              </Link>
-              <h1>Wallet</h1>
-            </div>
-            <div className=" mb-2 text-center text-xl font-semibold w-full ">
-              <Link to={'/category/products'} className=" inline-block overflow-hidden bg-gray-800 h-50 w-full  rounded-md text-white font-semibold  ">
-                <img className="w-full h-full object-cover" src="/wallet2.webp" alt="" />
-              </Link>
-              <h1>Wallet</h1>
-            </div>
-            <div className=" mb-2 text-center text-xl font-semibold w-full ">
-              <Link to={'/category/products'} className=" inline-block overflow-hidden bg-gray-800 h-50 w-full  rounded-md text-white font-semibold  ">
-                <img className="w-full h-full object-cover" src="/Walletimg.webp" alt="" />
-              </Link>
-              <h1>Wallet</h1>
-            </div>
+            {categories.map((c, i) => {
+              const fp = products.filter(p => p.category === c)
+              // console.log(fp)
+              return <div key={i} className=" mb-2 text-center text-xl font-semibold w-full ">
+                <Link to={'/category/products'} className=" inline-block overflow-hidden bg-gray-800 h-50 w-full  rounded-md text-white font-semibold  ">
+                  <img className="w-full h-full object-cover" src={'/wallet2.webp'} alt="manually adding picture" />
+                </Link>
+                <h1>{c}</h1>
+              </div>
+            })}
 
           </div>
           <h1 className="text-3xl my-8 font-semibold ">Customer Reviews</h1>
@@ -154,6 +144,12 @@ const Home = () => {
         </div>
 
       </main>
+    </div> : <div className="bg-red-00 h-full w-full overflow-hidden  ">
+      <div className="h-10/13 w-full bg-gray-0">
+        {<img className={`h-full w-full object-contain transition-transform duration-1000 ease-in-out ${scaled ? 'scale-150' : 'scale-100'}`}
+          src="https://res.cloudinary.com/dgis42anh/image/upload/v1749317565/logo_ac7mo9.jpg" alt="" />}
+      </div>/
+      <h1 className="text-3xl  font-bold text-zinc-800 text-center uppercase "> please wait...</h1>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import About from './pages/About.jsx'
@@ -14,10 +14,23 @@ import Logout from './Admin/Logout.jsx'
 import CheckoutForm from './pages/CheckoutForm.jsx'
 import OrderSummary from './components/OrderSummary.jsx'
 import Cart from './components/Cart.jsx'
+import { ProductDataContext } from './context/ProductContext.jsx'
 
 const App = () => {
   const location = useLocation()
   const hideNavbar = location.pathname.startsWith("/admin/");
+  const { lengthc, setlengthc } = useContext(ProductDataContext)
+  
+  useEffect(() => {
+    const cartlength = JSON.parse(localStorage.getItem("cart"))
+    if (cartlength) {
+      setlengthc(cartlength?.length)
+    }else{
+      setlengthc(0)
+    }
+  }, [])
+
+
   return (
     <div className={`bg-white text-black ${hideNavbar ? "" : "pt-20"} h-screen w-full`}>
       {!hideNavbar && <Navbar />}
@@ -33,7 +46,7 @@ const App = () => {
         <Route path='/checkout/order/:productId' element={<OrderSummary />} />
         <Route path='/category/:productname' element={<CategoryPage />} />
         <Route path='/product/all' element={<CategoryPage />} />
-        <Route path='/cart' element={<Cart/>} />
+        <Route path='/cart' element={<Cart />} />
       </Routes>
     </div>
   )

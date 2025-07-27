@@ -4,21 +4,41 @@ import { FaShieldAlt, FaSmile, FaCoins, FaUndo, FaExchangeAlt, FaRupeeSign } fro
 import { FaStar } from "react-icons/fa";
 import { ProductDataContext } from "../context/ProductContext";
 import { useNavigate, useParams } from "react-router-dom";
+import { addCartWithQuantity } from "../utils/local.cart";
 
 const ProductDetails = () => {
     const navigate = useNavigate()
     const { productId } = useParams()
-    const { singleProduct } = useContext(ProductDataContext)
+    const { singleProduct, setlengthc } = useContext(ProductDataContext)
     const [p, setp] = useState(null)
+    const [cartbtn, setCartBtn] = useState(false)
     const [quantity, setQuantity] = useState(1);
     const increment = () => setQuantity((q) => q + 1);
     const decrement = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
 
-    useEffect(() => { singleProduct(productId).then(data => setp(data)) }, [])
+    useEffect(() => {
+        singleProduct(productId).then(data => setp(data))
+    }, [productId])
 
-    // console.log(p)
+    const addCart = () => {
+        addCartWithQuantity(p, quantity)
+        setCartBtn(true)
+        const cart = JSON.parse(localStorage.getItem("cart"))
+        setlengthc(cart?.length)
+        setTimeout(() => {
+            setCartBtn(false)
+        }, 2000);
+    }
 
-    return (
+    const buyNow = (p) =>{
+        try {
+            navigate(`/checkout/${p._id}`) 
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    return (p ?
         <div className="h-screen text-black w-full  px-3 pb-8">
             <>
                 <div className="bg-red-200 w-full h-2/5 mt-4 rounded-md overflow-hidden">
@@ -41,10 +61,10 @@ const ProductDetails = () => {
                             <button onClick={increment} className="px-3 py-1 text-xl">+</button>
                         </div>
                     </div>
-                    <button onClick={()=>{}} className="w-full border border-black rounded-full py-3 text-center hover:bg-black hover:text-white transition">
-                        Add to cart
+                    <button onClick={addCart} className="w-full border capitalize  text-xl border-black rounded-full py-2 text-center hover:bg-black hover:text-white transition">
+                        {cartbtn ? "added successfully ✅" : "add to cart"}
                     </button>
-                    <button onClick={()=>{navigate(`/checkout/${p._id}`)}} className="w-full bg-black text-white rounded-full py-3 text-center hover:bg-gray-900 transition">
+                    <button onClick={() => { buyNow(p)}} className="w-full bg-black text-white rounded-full text-xl font-semibold py-2 text-center hover:bg-gray-900 transition">
                         Buy it now
                     </button>
 
@@ -127,8 +147,11 @@ const ProductDetails = () => {
                 <div className="relative">
                     <input type="text" placeholder="Write something about this product." className="mb-4 w-full px-4 py-2 border border-t-0 border-r-0 border-gray-300 outline-none rounded-lg transition" />
                     {<p className="bg-blue-400 px-2 text-white rounded-full font-semibold select-none absolute right-4 top-2 text-center ">send</p>}
-                </div>  
+                </div>
             </div>
+        </div> : <div className=" flex justify-center items-center h-10/12 w-full ">
+            <img className=" object-contain h-2/4 w-2/5 "
+                src="/src/assets/loader.gif" alt="" />
         </div>
     );
 }

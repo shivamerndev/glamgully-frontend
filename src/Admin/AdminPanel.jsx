@@ -21,11 +21,11 @@ const AdminPanel = () => {
     getProductsAdmin().then((data) => {
       if (data) setProducts(data);
     });
-  }, []);
+  }, [products]);
 
 
 
-  return (
+  return (products ?
     <div className="flex flex-col pt-19  lg:flex-row h-screen bg-gray-100">
       {/* Sidebar */}
       <aside className="w-full lg:w-64 fixed top-0 lg:static bg-white p-5 shadow-md">
@@ -129,6 +129,9 @@ const AdminPanel = () => {
           </div>
         </section>
       </main>
+    </div> : <div className=" flex justify-center items-center h-1/2 w-full ">
+      <img className=" object-contain h-2/4 w-2/5 "
+        src="/src/assets/loader.gif" alt="" />
     </div>
   );
 }

@@ -1,14 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import { addToCart } from '../utils/local.cart'
+import { ProductDataContext } from '../context/ProductContext';
 
 const Card = ({ r = "full", img, product }) => {
     const navigate = useNavigate();
-    const [cartbtn, setCartBtn] = useState("Add to cart")
+    const [cartbtn, setCartBtn] = useState(false)
+    const { setlengthc } = useContext(ProductDataContext)
 
-    const add = () => {
-        const title = addToCart(product)
-        setCartBtn(title)
+    const addCart = () => {
+        addToCart(product)
+        setCartBtn(true)
+        const cart = JSON.parse(localStorage.getItem("cart"))
+        setlengthc(cart?.length)
+        setTimeout(() => {
+            setCartBtn(false)
+        }, 2000);
     }
 
     return (
@@ -20,7 +27,7 @@ const Card = ({ r = "full", img, product }) => {
                 <h1>{product?.title}</h1>
                 <h1>₹ {product?.price}.00</h1>
             </div>
-            <button onClick={add} className='outline-1 w-full py-1 text-xl outline-gray-500 rounded-3xl'>{cartbtn}</button>
+            <button onClick={addCart} className='outline-1 w-full py-1 text-xl outline-gray-500 capitalize rounded-3xl'>{cartbtn ? "added ✅" : "add to cart"}</button>
         </div>
     )
 }

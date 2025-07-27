@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { axiosProductInstance } from '../utils/axios.instance';
 import { createContext } from 'react'
 import { useParams } from 'react-router-dom';
@@ -61,9 +61,18 @@ const ProductContext = ({ children }) => {
             console.log(error.message)
         }
     }
+    const searchProduct = async (search) => {
+        try {
+            const response = await axiosProductInstance.post(`/search`, { search })
+            return (response.data)
+        } catch (error) {
+            console.error(error.message)
+        }
+    }
+    const [lengthc, setlengthc] = useState(0)
     return (
         <>
-            <ProductDataContext.Provider value={{ createProduct, getProducts, getProductsAdmin, singleProduct, editProduct, deleteProduct }}>
+            <ProductDataContext.Provider value={{ lengthc , setlengthc, searchProduct, createProduct, getProducts, getProductsAdmin, singleProduct, editProduct, deleteProduct }}>
                 {children}
             </ProductDataContext.Provider>
         </>
