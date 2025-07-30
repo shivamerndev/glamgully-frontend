@@ -3,6 +3,7 @@ import { ProductDataContext } from "../context/ProductContext";
 import FormProduct from './FormProduct';
 import { Link } from 'react-router-dom';
 import { AdminDataContext } from '../context/AdminContext';
+import Loader from '../../src/assets/loader.gif';
 
 const AdminPanel = () => {
   const { getProductsAdmin, editProduct } = useContext(ProductDataContext)
@@ -17,11 +18,12 @@ const AdminPanel = () => {
       setShowModal(false);
     }
   };
+  
   useEffect(() => {
     getProductsAdmin().then((data) => {
       if (data) setProducts(data);
     });
-  }, [products]);
+  }, []);
 
 
 
@@ -129,9 +131,9 @@ const AdminPanel = () => {
           </div>
         </section>
       </main>
-    </div> : <div className=" flex justify-center items-center h-1/2 w-full ">
+    </div> : <div className=" flex justify-center items-center h-full  w-full ">
       <img className=" object-contain h-2/4 w-2/5 "
-        src="/src/assets/loader.gif" alt="" />
+        src={Loader} alt="loading" />
     </div>
   );
 }
