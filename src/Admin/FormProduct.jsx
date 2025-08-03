@@ -6,16 +6,19 @@ const FormProduct = ({ handleBackdropClick, setShowModal, EditProduct }) => {
     const { createProduct, editProduct, deleteProduct } = useContext(ProductDataContext)
     const data = { title: "", price: "", description: "", category: "", quantity: "", discount: "" }
     const [form, setForm] = useState(data)
-    const [productimg, setProductImg] = useState(null)
+    const [productimg, setProductImg] = useState([])
+
 
 
     const formhandler = (e) => {
         e.preventDefault();
         const formData = new FormData();
         if (!productimg && !EditProduct?.edit) return toast.error("Product Image required!");
-        if (productimg instanceof File) {
-            formData.append("productimage", productimg)
-        }
+        productimg.forEach((file) => {
+            if (file instanceof File) {
+                formData.append("productimage", file)
+            }
+        })
         Object.entries(form).forEach(([key, value]) => {
             formData.append(key, value);
         });
@@ -34,6 +37,8 @@ const FormProduct = ({ handleBackdropClick, setShowModal, EditProduct }) => {
         }
     }, [EditProduct?.edit])
 
+    // console.log(productimg);
+
     return (
         <div id="modal-backdrop" onClick={handleBackdropClick} className="fixed inset-0 flex items-center justify-center bg-[#000000a5] bg-opacity-50 z-50">
             <div className="bg-white rounded-xl p-6 w-full max-w-md relative">
@@ -43,8 +48,12 @@ const FormProduct = ({ handleBackdropClick, setShowModal, EditProduct }) => {
                 <form onSubmit={formhandler} >
                     <div className="flex flex-col items-center">
                         <label htmlFor="product-image-upload" className="flex justify-center py-1 items-center px-4 w-full border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
-                            <input onChange={(e) => setProductImg(e.target.files[0])} id="product-image-upload" type="file" className="hidden" />
-                            {productimg ? <img src={URL.createObjectURL(productimg)} alt="Preview" className=" w-10 h-10 object-cover rounded border-gray-500" /> : <p className="py-4 text-sm  text-gray-500"><span className="font-semibold">Click to upload</span> or drag & drop</p>}
+                            <input multiple onChange={(e) => {
+                                const files = (e.target.files);
+                                setProductImg([...files])
+                            }} id="product-image-upload" type="file" className="hidden" />
+                            {/* {productimg ? <img src={URL.createObjectURL(productimg)} alt="Preview" className=" w-10 h-10 object-cover rounded border-gray-500" /> : <p className="py-4 text-sm  text-gray-500"><span className="font-semibold">Click to upload</span> or drag & drop</p>} */}
+                            {<p className="py-4 text-sm capitalize font-semibold  text-gray-700">{productimg?.length > 0 ? ` You choosed ${productimg?.length} files.` : "Click to upload or drag & drop"}</p>}
                         </label>
                         <input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} type="text" placeholder="Product Name" className="mt-4 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
                         <input required value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} type="number" placeholder="Price" className="mt-4 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />

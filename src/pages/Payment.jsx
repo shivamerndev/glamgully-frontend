@@ -20,7 +20,7 @@ export const handlePayment = async (amount) => {
         return;
     }
     try {
-        const orderRes = await axios.post("https://glamgully-backend.vercel.app/pay/order", {
+        const orderRes = await axios.post("https://glamgully-backend.onrender.com/pay/order", {
             amount: amount * 100, // amount in paise
         });
         const data = orderRes.data.order;
@@ -43,7 +43,7 @@ const handlePaymentVerify = (data) => {
         handler: async (response) => {
             console.log("Payment Successful", response);
             try {
-                await axios.post("https://glamgully-backend.vercel.app/pay/verify", {
+                await axios.post("https://glamgully-backend.onrender.com/pay/verify", {
                     razorpay_payment_id: response.razorpay_payment_id,
                     razorpay_order_id: response.razorpay_order_id,
                     razorpay_signature: response.razorpay_signature,

@@ -11,12 +11,15 @@ const CheckoutForm = () => {
     const [af, setaddform] = useState(obj)
 
 
-
     const handleNextBtn = (e) => {
         try {
             e.preventDefault()
             console.log(af);
-            navigate(`/checkout/order/${productId}`)
+            navigate(`/checkout/order/${productId || "cart"}`, {
+                state: {
+                    address: af
+                }
+            })
         } catch (error) {
             console.log(error);
         }

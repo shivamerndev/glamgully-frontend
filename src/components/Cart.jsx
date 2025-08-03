@@ -2,10 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { removeFromCart } from '../utils/local.cart'
 import { ProductDataContext } from "../context/ProductContext";
+import { useNavigate } from "react-router-dom";
 
 
 const Cart = () => {
-
+    const navigate = useNavigate();
     let cart = JSON.parse(localStorage.getItem("cart"));
     const [cartItems, setcartItems] = useState();
     const { setlengthc } = useContext(ProductDataContext)
@@ -50,6 +51,8 @@ const Cart = () => {
         setcartItems(cart);
     };
 
+    // console.log("cartItems", cartItems);
+
     return cartItems ? (
         <div className="max-w-xl mx-auto p-4 font-sans">
             <div className="flex justify-between items-center mb-4">
@@ -61,18 +64,16 @@ const Cart = () => {
 
             <div className="border-t border-gray-200">
                 {cartItems.map((item, i) => (
-                    <div
+                    <div 
                         key={i}
-                        className="flex items-center py-4 border-b border-gray-100"
-                    >
-                        <img
-                            src={item.productimage}
+                        className="flex items-center py-4 border-b border-gray-100">
+                        <img onClick={() => { navigate(`/product/${item._id}`) }}
+                            src={item.productimage[0]}
                             alt={item.name}
-                            className="w-16 h-16 object-cover rounded mr-4"
-                        />
+                            className="w-16 h-16 object-cover rounded mr-4" />
                         <div className="flex-1">
-                            <h3 className="text-sm font-medium text-gray-800">{item.name}</h3>
-                            <p className="text-sm text-gray-500">Rs. {item.price}</p>
+                            <h3 className="text-sm capitalize font-medium text-gray-800">{item.title}</h3>
+                            <p className="text-xs text-gray-500">Rs. {item.price}</p>
                             <div className="flex items-center mt-2">
                                 <button
                                     onClick={() => decrement(item._id)}
@@ -111,7 +112,7 @@ const Cart = () => {
                     Taxes included. Discounts and <a className="underline">shipping</a>{" "}
                     calculated at checkout.
                 </p>
-                <button className="mt-4 bg-black text-white px-6 py-2 rounded">
+                <button onClick={() => { navigate('/checkout/cart') }} className="mt-4 bg-black text-white px-6 py-2 rounded">
                     Check out
                 </button>
             </div>

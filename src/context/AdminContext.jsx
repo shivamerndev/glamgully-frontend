@@ -23,7 +23,7 @@ const AdminContext = ({ children }) => {
             console.log(error)
         }
     }
-    const GetAdmin = async () => {
+    const GetAdminDashboard = async () => {
         try {
             const res = await axiosAdminInstance.get('/dashboard')
             return (res.data)
@@ -40,7 +40,7 @@ const AdminContext = ({ children }) => {
     }
     return (
         <>
-            <AdminDataContext.Provider value={{ createAdmin, LoginAdmin, GetAdmin, LogoutAdmin }}>
+            <AdminDataContext.Provider value={{ createAdmin, LoginAdmin, GetAdminDashboard, LogoutAdmin }}>
                 {children}
             </AdminDataContext.Provider>
         </>

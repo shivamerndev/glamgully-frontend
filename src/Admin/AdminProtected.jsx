@@ -1,15 +1,19 @@
 import React, { useContext, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { href, useNavigate } from 'react-router-dom'
 import { AdminDataContext } from '../context/AdminContext'
 
 const AdminProtected = ({ children }) => {
     const navigate = useNavigate()
-    const { GetAdmin } = useContext(AdminDataContext)
-    const token = localStorage.getItem("token")
+    const { GetAdminDashboard } = useContext(AdminDataContext)
     useEffect(() => {
-        if (!token) return navigate('/admin/login')
-        GetAdmin()
-    }, [token])
+        const token = localStorage.getItem("token")
+        if (!token) {
+            navigate('/admin/login')
+        }
+        // else {
+        //     GetAdminDashboard()
+        // }
+    }, [])
     return <> {children} </>
 }
 

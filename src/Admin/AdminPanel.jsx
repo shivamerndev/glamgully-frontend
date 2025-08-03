@@ -21,9 +21,9 @@ const AdminPanel = () => {
   
   useEffect(() => {
     getProductsAdmin().then((data) => {
-      if (data) setProducts(data);
+      setProducts(data.reverse());
     });
-  }, []);
+  }, [showModal]);
 
 
 
@@ -73,8 +73,8 @@ const AdminPanel = () => {
           </div>
           {showModal && <FormProduct EditProduct={showModal} setShowModal={setShowModal} handleBackdropClick={handleBackdropClick} />}
           <div className="overflow-x-auto bg-white shadow rounded-xl">
-            <table className="min-w-full text-left">
-              <thead className="bg-gray-100">
+            <table className="min-w-full text-left ">
+              <thead className="bg-zinc-800 text-white">
                 <tr>
                   <th className="px-4 py-2">Name</th>
                   <th className="px-4 py-2">Stock</th>
@@ -83,11 +83,11 @@ const AdminPanel = () => {
                   <th className="px-4 py-2">Edit</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="rounded-2xl bg-gray-700 h-[50vh] text-white overflow-hidden">
                 {products?.map((p, i) => {
-                  return <tr key={i}>
+                  return <tr key={i} className={`${p.quantity < 5 && "bg-black"}  rounded-2xl border-b-[1px]`}>
                     <td className="px-4 py-2">{p.title}</td>
-                    <td className="px-4 py-2">{p.quantity < 10 ? `0${p.quantity}` : p.quantity}</td>
+                    <td className={`px-4 py-2  ${p.quantity < 5 && "text-red-700 font-bold"}`}>{p.quantity < 10 ? `0${p.quantity}` : p.quantity}</td>
                     <td className="px-4 py-2">₹{p.price}.00</td>
                     <td
                       onClick={() => {
@@ -99,10 +99,10 @@ const AdminPanel = () => {
                           return newState;
                         });
                       }}
-                      className={`px-4 py-2 capitalize cursor-pointer ${((isActiveState[p._id] ?? p.isActive) ? 'text-green-600' : 'text-red-600')}`}>
+                      className={`px-4 py-2 capitalize cursor-pointer ${((isActiveState[p._id] ?? p.isActive) ? 'text-green-500' : 'text-red-500')}`}>
                       {(isActiveState[p._id] ?? p.isActive) ? "active" : "inactive"}
                     </td>
-                    <td onClick={() => setShowModal({ 'edit': p })} className="px-4 py-2 text-blue-600">Edit</td>
+                    <td onClick={() => setShowModal({ 'edit': p })} className="px-4 py-2 text-yellow-400">Edit</td>
                   </tr>
                 })}
               </tbody>
@@ -133,7 +133,7 @@ const AdminPanel = () => {
       </main>
     </div> : <div className=" flex justify-center items-center h-full  w-full ">
       <img className=" object-contain h-2/4 w-2/5 "
-        src={Loader} alt="loading" />
+        src={Loader} alt="loading..." />
     </div>
   );
 }

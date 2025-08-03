@@ -2,13 +2,38 @@
 /* @plugin "daisyui"; */
 
 #cards::-webkit-scrollbar {
-    display: none;
+  display: none;
+  height: 5px;
+  transition: all 0.3s linear;
+}
+#cards::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #fcff9e 0%, #f59b14 100%);
+  border-radius: 20%;
 }
 
 .marquee-track {
   display: flex;
-  /* width: max-content; */
   animation: marquee 5s linear infinite;
+  background: linear-gradient(
+    300deg,
+    rgb(164, 18, 189) 0%,
+    rgb(223, 115, 43) 48%,
+    rgb(187, 113, 8) 100%
+  );
+  transition: all ease-in-out;
+}
+
+#offer {
+  background: #833ab4;
+  background: linear-gradient(
+    87deg,
+    rgba(131, 58, 180, 1) 0%,
+    rgba(189, 19, 19, 1) 48%,
+    rgba(212, 137, 32, 1) 100%
+  );
+}
+#offertext {
+  animation: marqueetext 1.5s ease-in-out infinite alternate-reverse;
 }
 
 @keyframes marquee {
@@ -19,8 +44,16 @@
     transform: translateX(-50%);
   }
 }
+@keyframes marqueetext {
+  0% {
+    transform: translateY(25%);
+  }
+  100% {
+    transform: translateY(-30%);
+  }
+}
 
-#orderform input{
+#orderform input {
   border: 1px solid rgba(14, 14, 14, 0.469);
   outline-color: rgba(0, 110, 255, 0.748);
 }

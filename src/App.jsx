@@ -20,12 +20,12 @@ const App = () => {
   const location = useLocation()
   const hideNavbar = location.pathname.startsWith("/admin/");
   const { lengthc, setlengthc } = useContext(ProductDataContext)
-  
+
   useEffect(() => {
     const cartlength = JSON.parse(localStorage.getItem("cart"))
     if (cartlength) {
       setlengthc(cartlength?.length)
-    }else{
+    } else {
       setlengthc(0)
     }
   }, [])
@@ -43,7 +43,9 @@ const App = () => {
         <Route path='/contact' element={<Contact />} />
         <Route path='/product/:productId' element={<ProductDetails />} />
         <Route path='/checkout/:productId' element={<CheckoutForm />} />
+        <Route path='/checkout/cart' element={<CheckoutForm />} />
         <Route path='/checkout/order/:productId' element={<OrderSummary />} />
+        <Route path='/checkout/order/cart' element={<OrderSummary />} />
         <Route path='/category/:productname' element={<CategoryPage />} />
         <Route path='/product/all' element={<CategoryPage />} />
         <Route path='/cart' element={<Cart />} />

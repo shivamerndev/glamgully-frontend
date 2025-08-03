@@ -31,7 +31,12 @@ const ProductContext = ({ children }) => {
     }
     const getProductsAdmin = async () => {
         try {
-            const response = await axiosProductInstance.get('/getadminproduct');
+            const response = await axiosProductInstance.get('/getadminproduct', {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    "Content-Type": "application/json"
+                }
+            });
             return (response.data);
         } catch (error) {
             console.log(error.message)
@@ -72,7 +77,7 @@ const ProductContext = ({ children }) => {
     const [lengthc, setlengthc] = useState(0)
     return (
         <>
-            <ProductDataContext.Provider value={{ lengthc , setlengthc, searchProduct, createProduct, getProducts, getProductsAdmin, singleProduct, editProduct, deleteProduct }}>
+            <ProductDataContext.Provider value={{ lengthc, setlengthc, searchProduct, createProduct, getProducts, getProductsAdmin, singleProduct, editProduct, deleteProduct }}>
                 {children}
             </ProductDataContext.Provider>
         </>

@@ -8,7 +8,7 @@ const Login = () => {
   const token = localStorage.getItem("token")
   const { LoginAdmin } = useContext(AdminDataContext)
   const [form, setForm] = useState({ username: "", password: "" })
-  useEffect(() => { token && navigate('/admin/glamgully') }, [token])
+  useEffect(() => { token && navigate('/admin/glamgully') }, [])
   const handleLogin = (e) => {
     e.preventDefault()
     LoginAdmin(form).then(res => {
@@ -16,7 +16,7 @@ const Login = () => {
       localStorage.setItem("token", res.token)
       setTimeout(() => {
         navigate("/admin/glamgully")
-      }, 3000);
+      }, 3000)
     })
       .catch(err => toast.error("Wrong username or password"))
   }
