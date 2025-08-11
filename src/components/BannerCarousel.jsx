@@ -55,25 +55,25 @@ const BannerCarousel = () => {
 
 
     return (
-        <div className="overflow-hidden relative w-full h-[50vh] bg-red-500"
+        <div className="overflow-hidden relative w-full h-[50vh] bg-red-00"
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd} >
 
             <div className="flex h-full transition-transform duration-700 ease-in-out"
                 style={{ transform: `translateX(-${current * 100}%)` }} >
                 {banners.map((banner, i) => (
-                    <div key={i} className="w-full flex-shrink-0 h-full relative">
+                    <a href="/product/all" key={i} className="w-full flex-shrink-0 h-full relative">
                         <div className="w-full h-full bg-black">
                             <img src={banner.img} alt={banner.title}
-                                className="w-full h-full object-cover object-center opacity-50" />
+                                className="w-full h-full object-cover object-center opacity-40" />
                         </div>
-                        <h1 className="absolute capitalize transition-opacity duration-700 ease-in-out text-white text-2xl font-semibold top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center w-10/12 px-4 "
+                        <h1 className="absolute font-[Tangerine,Poppins,sans-serif] backdrop-blur-xs  capitalize transition-opacity duration-700 ease-in-out text-yellow-100 leading-none text-[10vw] font-bold top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center w-full"
                             style={{
-                                textShadow: "rgb(0 0 0 / 99%) 5px 4px 4px"
+                                textShadow: "rgb(0 0 0 / 80%) 5px 4px 4px"
                             }}>
                             {banner.title}
                         </h1>
-                    </div>
+                    </a>
                 ))}
             </div>
             <h1 onClick={() => { setCurrent(prev => prev + 100) }} className="absolute hidden md:block left-3 p-1 text-xl text-gray-800 font-semibold rounded-full z-10 bg-[#ffffff5c] top-[40%]"><MdArrowLeft /></h1>

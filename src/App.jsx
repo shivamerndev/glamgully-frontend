@@ -15,6 +15,8 @@ import CheckoutForm from './pages/CheckoutForm.jsx'
 import OrderSummary from './components/OrderSummary.jsx'
 import Cart from './components/Cart.jsx'
 import { ProductDataContext } from './context/ProductContext.jsx'
+import ProductsPage from './Admin/ProductsPage.jsx'
+import CustomersPage from './Admin/CustomersPage.jsx'
 
 const App = () => {
   const location = useLocation()
@@ -32,12 +34,14 @@ const App = () => {
 
 
   return (
-    <div className={`bg-white text-black ${hideNavbar ? "" : "pt-20"} h-screen w-full`}>
+    <div className={`bg-white text-black ${hideNavbar ? "" : "pt-20"} font-[Poppins,Tangerine,sans-serif] h-screen w-full`}>
       {!hideNavbar && <Navbar />}
       <Routes>
         <Route path='/admin/register' element={<Register />} />
         <Route path='/admin/login' element={<Login />} />
         <Route path="/admin/glamgully" element={<AdminProtected><AdminPanel /></AdminProtected>} />
+        <Route path="/admin/glamgully/products" element={<AdminProtected><ProductsPage /></AdminProtected>} />
+        <Route path="/admin/glamgully/customers" element={<AdminProtected><CustomersPage /></AdminProtected>} />
         <Route path="/" element={<Home />} />
         <Route path='/about' element={<About />} />
         <Route path='/contact' element={<Contact />} />

@@ -1,56 +1,51 @@
 import axios from "axios";
 
-
-// Utility to load Razorpay script
-const loadScript = (src) => {
-    return new Promise((resolve) => {
-        const script = document.createElement("script");
-        script.src = src;
-        script.onload = () => resolve(true);
-        script.onerror = () => resolve(false);
-        document.body.appendChild(script);
-    });
-};
-
 // handlePayment Function
-export const handlePayment = async (amount) => {
-    const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
-    if (!res) {
-        alert("Razorpay SDK failed to load.");
-        return;
-    }
+export const handlePayment = async (amount, address, createCustomer, editQuantity) => {
     try {
-        const orderRes = await axios.post("https://glamgully-backend.onrender.com/pay/order", {
-            amount: amount * 100, // amount in paise
-        });
-        const data = orderRes.data.order;
-        // console.log(data);
-        handlePaymentVerify(data);
+        const orderres = await axios.post(`${import.meta.env.VITE_BASE_URL}/pay/order`, { amount: amount * 100 });
+        const data = orderres.data.order;
+        handlePaymentVerify(data, address, createCustomer, editQuantity);
     } catch (error) {
         console.log(error);
     }
 };
+// 🧾  Address Formatter
+const formatAddress = (addr) => {
+    const { address, landmark, city, state, pincode } = addr;
+    return `${address}, ${landmark || ""}, ${city}, ${state} - ${pincode}`;
+};
+
+// const ReadableString = (address) => Object.entries(address).map(([key, value]) => `${key === "address" ? key + " - " + value : value} `).join("\n");
 
 // verifyPayment Function
-const handlePaymentVerify = (data) => {
+const handlePaymentVerify = (data, address, createCustomer, editQuantity) => {
     const options = {
-        key: "rzp_test_ac7lk4wkZPzIHm",
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Enter the Key ID generated from the Dashboard
         amount: data.amount,
         currency: data.currency,
         name: "GlamGully",
-        description: "Test Transaction",
+        description: formatAddress(address),
         order_id: data?.id,
         handler: async (response) => {
-            console.log("Payment Successful", response);
             try {
-                await axios.post("https://glamgully-backend.onrender.com/pay/verify", {
+                await axios.post(`${import.meta.env.VITE_BASE_URL}/pay/verify`, {
                     razorpay_payment_id: response.razorpay_payment_id,
                     razorpay_order_id: response.razorpay_order_id,
                     razorpay_signature: response.razorpay_signature,
                 });
+                createCustomer({ fullname: address.fullname, phone: address.phone })
+                editQuantity();
             } catch (error) {
                 console.error("Payment verification failed:", error);
             }
+        },
+        prefill: {
+            email: address.fname + address.lname, // Optional
+            contact: address.phone, // Optional
+        },
+        notes: {
+            note: "Address Saved here",
         },
         theme: { color: "#5f63b8" }
     };

@@ -21,9 +21,17 @@ const ProductContext = ({ children }) => {
             console.log(error?.response?.data)
         }
     }
-    const getProducts = async () => {
+    const getProducts = async (page, limit,sort) => {
         try {
-            const response = await axiosProductInstance.get('/getproduct');
+            const response = await axiosProductInstance.get(`/getproduct?page=${page}&limit=${limit}&sort=${sort}`);
+            return (response.data);
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
+    const bestSellingProducts = async () => {
+        try {
+            const response = await axiosProductInstance.get(`/best/products`);
             return (response.data);
         } catch (error) {
             console.log(error.message)
@@ -75,9 +83,10 @@ const ProductContext = ({ children }) => {
         }
     }
     const [lengthc, setlengthc] = useState(0)
+
     return (
         <>
-            <ProductDataContext.Provider value={{ lengthc, setlengthc, searchProduct, createProduct, getProducts, getProductsAdmin, singleProduct, editProduct, deleteProduct }}>
+            <ProductDataContext.Provider value={{ bestSellingProducts,lengthc, setlengthc, searchProduct, createProduct, getProducts, getProductsAdmin, singleProduct, editProduct, deleteProduct }}>
                 {children}
             </ProductDataContext.Provider>
         </>

@@ -29,6 +29,7 @@ const FormProduct = ({ handleBackdropClick, setShowModal, EditProduct }) => {
         }).catch(err => alert(err)) : editProduct(form).then(res => {
             toast.success("Product updated successfully.")
             setForm(data)
+            setShowModal(false)
         }).catch(err => toast.error(err.message))
     }
     useEffect(() => {
@@ -36,8 +37,6 @@ const FormProduct = ({ handleBackdropClick, setShowModal, EditProduct }) => {
             setForm(EditProduct?.edit)
         }
     }, [EditProduct?.edit])
-
-    // console.log(productimg);
 
     return (
         <div id="modal-backdrop" onClick={handleBackdropClick} className="fixed inset-0 flex items-center justify-center bg-[#000000a5] bg-opacity-50 z-50">

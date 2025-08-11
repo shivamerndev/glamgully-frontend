@@ -1,4 +1,5 @@
 import { useRef, useContext, useEffect, useState } from "react";
+import CardHome from "../components/CardHome";
 import Card from "../components/Card";
 import { Link } from "react-router-dom";
 import { ProductDataContext } from "../context/ProductContext";
@@ -8,7 +9,7 @@ import { IoChevronForward } from "react-icons/io5";
 
 
 const Home = () => {
-  const { getProducts } = useContext(ProductDataContext)
+  const { getProducts, bestSellingProducts } = useContext(ProductDataContext)
   const [products, setProducts] = useState(null)
   const [best, setBest] = useState(null)
   const [current, setcurrent] = useState(0)
@@ -16,17 +17,14 @@ const Home = () => {
   const bestRef = useRef(null);
   const [arrowVisible, setArrowVisible] = useState(true);
 
-  const categories = [...new Set(products?.map(p => p.category))]
-  // console.log(categories);
-
+  const categories = [...new Set(products?.map(p => p.category.trim()))]
 
   useEffect(() => {
-    localStorage.removeItem("token")
     getProducts().then((data) => {
-      if (data) {
-        setProducts(data)
-        setBest(data.filter(p => p.price > 499).splice(2, 5))
-      }
+      if (data) setProducts(data.products);
+    });
+    bestSellingProducts().then((data) => {
+      if (data) setBest(data)
     });
   }, []);
 
@@ -72,17 +70,31 @@ const Home = () => {
 
         <div className=" mt-10 px-4">
           <h1 className="text-3xl my-6" >Limited Edition</h1>
-          <div id='cards' ref={cardsRef} className="flex overflow-x-auto gap-3 relative w-full">
-            {products && products.map((p, i) => (<div key={i}> <Card product={p} /></div>))}
-            {arrowVisible && (<div className="bg-[#ecececdd] z-100 rounded-full sticky h-fit p-2 top-1/4 right-0 justify-between">
-              <IoChevronForward onClick={() => {
-                if (cardsRef.current) {
-                  cardsRef.current.scrollBy({ left: 300, behavior: 'smooth' });
-                }
-                setArrowVisible(false);
-              }} size={30} />
-            </div>)}
+          <div
+            id="cards"
+            ref={cardsRef}
+            className="flex overflow-x-auto gap-3 relative w-full scroll-smooth">
+            {products?.map((p, i) => (
+              <div key={i}>
+                <Card product={p} />
+              </div>
+            ))}
+
+            {arrowVisible && (
+              <div className="bg-[#ecececdd] z-50 rounded-full sticky h-fit p-2 top-1/4 right-0 cursor-pointer shadow-md">
+                <IoChevronForward
+                  onClick={() => {
+                    if (cardsRef.current) {
+                      cardsRef.current.scrollBy({ left: 300, behavior: "smooth" });
+                    }
+                    setArrowVisible(false);
+                  }}
+                  size={30}
+                />
+              </div>
+            )}
           </div>
+
           <Link to={'/product/all'} className='outline-1 w-full py-2 text-xl outline-gray-900 rounded-3xl capitalize my-8 inline-block text-center'>view all</Link>
         </div>
         <div className=" mt-5 px-4">
@@ -101,38 +113,55 @@ const Home = () => {
           <Link to={'/product/all'} className='outline-1 w-full py-2 text-xl outline-gray-900 rounded-3xl capitalize my-8 inline-block text-center'>view all</Link>
         </div>
         <div className=" px-4 ">
-          <h1 className="text-3xl my-5 font-semibold" >Category</h1>
+          <h1 className="text-3xl my-5 " >Category</h1>
           <div className="grid gap-3 grid-cols-2 w-full ">
 
             {categories.map((c, i) => {
               const fp = products.filter(p => p.category === c)
               if (fp.length < 1) {
-                // console.log(fp);
                 return null; // Skip rendering if no products found for this category
               }
               return <div key={i} className=" mb-2 text-center text-xl font-semibold w-full ">
                 <Link to={`/category/${c}`} className=" inline-block overflow-hidden bg-gray-800 h-50 w-full  rounded-md text-white font-semibold  ">
                   <img className="w-full h-full object-cover object-center" src={fp[0].productimage[0]} alt="manually adding picture" />
                 </Link>
-                <h1>{c}</h1>
+                <h1 className="font-[PP] backdrop-blur-xs text-shadow-2xs font-light text-2xl">{c}</h1>
               </div>
             })}
 
           </div>
-          <h1 className="text-3xl my-5 font-semibold ">Customer Reviews</h1>
-          <div className="flex gap-2 overflow-x-auto w-full ">
-            <div className="w-2/2 overflow-y-auto text-base  h-40 rounded-lg text-black font-semibold  py-2 ">
-              <h1>Review texts here...</h1>
-            </div>
+          <h1 className="text-3xl my-6 font-semibold text-gray-800">
+            Customer Reviews
+          </h1>
+
+          <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
+            {[...Array(6)].map((_, i) => (
+              <div
+                key={i}
+                className="w-2/4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 flex-shrink-0"
+              >
+                {/* Review Image */}
+                <img
+                  src={`https://randomuser.me/api/portraits/men/${i + 10}.jpg`}
+                  alt="Customer"
+                  className="w-full h-50 object-cover rounded-t-xl"
+                />
+              </div>
+            ))}
           </div>
+
         </div>
 
       </main>
-    </div> : <div className="bg-red-00 h-full w-full overflow-hidden  ">
-      <div className="h-10/13 w-full bg-gray-0">
+    </div>
+    : <div className=" h-full w-full overflow-hidden  ">
+      <div className="h-10/13 w-full">
         {<img className={`h-full w-full object-contain transition-transform duration-1000 ease-in-out ${scaled ? 'scale-150' : 'scale-100'}`}
           src="https://res.cloudinary.com/dgis42anh/image/upload/v1749317565/logo_ac7mo9.jpg" alt="" />}
-      </div>/
+      </div>
+      <div className="h-40 w-full flex justify-center items-center absolute overflow-hidden bottom-4">
+        <img className="h-full" src="/public/home waiting.webp" alt="loading..." />
+      </div>
     </div>
   );
 };

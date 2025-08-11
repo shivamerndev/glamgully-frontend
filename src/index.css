@@ -1,5 +1,11 @@
 @import "tailwindcss";
-/* @plugin "daisyui"; */
+@theme {
+  --breakpoint-xs: 20rem;
+}
+@font-face {
+  font-family: PP;
+  src: url(../public/PP.woff);
+}
 
 #cards::-webkit-scrollbar {
   display: none;

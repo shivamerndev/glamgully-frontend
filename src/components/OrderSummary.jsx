@@ -1,28 +1,61 @@
 import React, { useActionState, useContext, useEffect, useState } from "react";
 import { ProductDataContext } from "../context/ProductContext";
-import { useNavigate, useParams } from "react-router-dom";
+import { CustomerDataContext } from "../context/CustomerContext";
+import { data, useLocation, useNavigate, useParams } from "react-router-dom";
 import { IoIosArrowDown } from "react-icons/io";
 import { handlePayment } from "../pages/Payment"
 
 
 const OrderSummary = ({ toggleHandle, isOpen = true }) => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const customerAddress = location.state?.address || null;
     const { productId } = useParams()
-    const { singleProduct } = useContext(ProductDataContext)
+    const { singleProduct, editProduct } = useContext(ProductDataContext)
+    const { createCustomer } = useContext(CustomerDataContext);
     const [product, setproduct] = useState()
     const [amount, setamount] = useState()
+    const [buyquantity, setbuyquantity] = useState(1)
     const productfromCart = JSON.parse(localStorage.getItem("cart"))
+
+    useEffect(() => {
+        setbuyquantity(productId?.split('&')[1])
+    }, [])
+
     useEffect(() => {
         if (productId !== undefined) {
-            singleProduct(productId).then(data => {
+            singleProduct(productId.split('&')[0]).then(data => {
                 setproduct(data)
-                setamount(data.price * data.quantity)
+                setamount(data.price * (buyquantity || data.quantity))
             })
         } else {
             setproduct(productfromCart)
             setamount(productfromCart.reduce((acc, item) => acc + (item.price * item.quantity), 0))
         }
-    }, [productId])
+    }, [productId, amount])
+
+
+    const editQuantity = () => {
+        try {
+            if (product.length > 0) {
+                product.forEach(elem => {
+                    singleProduct(elem._id).then(data => {
+                        const updatedProduct = { ...elem, quantity: data.quantity - elem.quantity };
+                        editProduct(updatedProduct).then((res) => {
+                            navigate("/product/all");
+                        })
+                    })
+                });
+                return;
+            }
+            const updatedProduct = { ...product, quantity: product.quantity - (buyquantity || 1) };
+            editProduct(updatedProduct).then((res) => {
+                navigate("/product/all");
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
 
     return (product &&
@@ -38,7 +71,7 @@ const OrderSummary = ({ toggleHandle, isOpen = true }) => {
             {isOpen && (
                 <div className="space-y-4 mt-4 p-4 ">
                     {/* Product Row */}
-                    {product.length !== undefined ? product.map((product, i) => <div onClick={() => { navigate(`/product/${product._id}`) }} key={i} className="flex items-center  gap-4">
+                    {product?.length !== undefined ? product.map((product, i) => <div onClick={() => { navigate(`/product/${product._id}`) }} key={i} className="flex items-center  gap-4">
                         <div key={i} className="relative">
                             <img
                                 src={product?.productimage[0]}
@@ -65,12 +98,12 @@ const OrderSummary = ({ toggleHandle, isOpen = true }) => {
                                     className="w-14 h-14 object-cover rounded"
                                 />
                                 <span className="absolute -top-2 -right-2 bg-gray-800 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                                    {product.quantity}
+                                    {buyquantity || product.quantity}
                                 </span>
                             </div>
                             <div className="flex-1">
                                 <p className="text-sm font-medium">{product.title}</p>
-                                <p className="text-sm mt-1 text-right">₹{product.price * product.quantity}.00</p>
+                                <p className="text-sm mt-1 text-right">₹{product.price * (buyquantity || product.quantity)}.00</p>
                             </div>
                         </div>}
                     {/* Discount Code */}
@@ -96,7 +129,7 @@ const OrderSummary = ({ toggleHandle, isOpen = true }) => {
                                 Shipping Charge{" "}
                                 <span className="text-gray-400 cursor-help">ⓘ</span>
                             </span>
-                            <span className="text-gray-500">Enter shipping address</span>
+                            <span className="text-gray-500 font-semibold">{customerAddress ? "Free" : "Enter shipping address"}</span>
                         </div>
                     </div>
 
@@ -105,7 +138,14 @@ const OrderSummary = ({ toggleHandle, isOpen = true }) => {
                         <span>Total</span>
                         <span>INR ₹{amount}.00</span>
                     </div>
-                    {!toggleHandle && <button onClick={() => handlePayment(amount)}
+                    {!toggleHandle && <button onClick={() => {
+                        if (customerAddress) {
+                            handlePayment(amount, customerAddress, createCustomer, editQuantity)
+                        } else {
+                            confirm("Please fill the address details before proceeding to payment.");
+                            navigate(-1)
+                        }
+                    }}
                         className="w-full bg-black mt-4 text-white rounded-full py-3 text-center hover:bg-gray-900 transition">
                         Pay Now
                     </button>}

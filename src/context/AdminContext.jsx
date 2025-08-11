@@ -20,7 +20,7 @@ const AdminContext = ({ children }) => {
             const response = await axiosAdminInstance.post("/login", data)
             return response.data
         } catch (error) {
-            console.log(error)
+            console.error(error.message);
         }
     }
     const GetAdminDashboard = async () => {
@@ -28,12 +28,13 @@ const AdminContext = ({ children }) => {
             const res = await axiosAdminInstance.get('/dashboard')
             return (res.data)
         } catch (error) {
-            console.log(error)
+            console.error(error.message)
         }
     }
-    const LogoutAdmin = () => {
+    const LogoutAdmin = async () => {
         try {
-            localStorage.removeItem('token')
+            let res = await axiosAdminInstance.get('/logout')
+            return (res);
         } catch (error) {
             console.log(error)
         }

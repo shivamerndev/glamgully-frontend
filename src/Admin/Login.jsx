@@ -5,15 +5,19 @@ import { AdminDataContext } from '../context/AdminContext'
 
 const Login = () => {
   const navigate = useNavigate()
-  const token = localStorage.getItem("token")
-  const { LoginAdmin } = useContext(AdminDataContext)
+  const { LoginAdmin, GetAdminDashboard } = useContext(AdminDataContext)
   const [form, setForm] = useState({ username: "", password: "" })
-  useEffect(() => { token && navigate('/admin/glamgully') }, [])
+
+  useEffect(() => {
+    GetAdminDashboard().then(res => {
+      if (res) return navigate("/admin/glamgully")
+    }).catch(err => console.log(err))
+  }, [])
+
   const handleLogin = (e) => {
     e.preventDefault()
     LoginAdmin(form).then(res => {
       toast.success(res.message)
-      localStorage.setItem("token", res.token)
       setTimeout(() => {
         navigate("/admin/glamgully")
       }, 3000)
