@@ -160,7 +160,7 @@ const Home = () => {
           src="https://res.cloudinary.com/dgis42anh/image/upload/v1749317565/logo_ac7mo9.jpg" alt="" />}
       </div>
       <div className="h-40 w-full flex justify-center items-center absolute overflow-hidden bottom-4">
-        <img className="h-full" src="/public/home waiting.webp" alt="loading..." />
+        <img className="h-full" src="/homeWaiting.webp" alt="loading..." />
       </div>
     </div>
   );

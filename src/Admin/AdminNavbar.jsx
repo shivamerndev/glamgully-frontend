@@ -12,7 +12,7 @@ const AdminNavbar = ({ focus }) => {
         <aside className="w-full lg:w-64 fixed z-10 top-0 lg:static bg-white shadow-md">
             <div className='w-full px-4 pt-4 flex justify-between mb-4'>
                 <img onClick={()=>navigate('/')} className='w-10 h-10 rounded-full ' src="https://res.cloudinary.com/dgis42anh/image/upload/v1749317565/logo_ac7mo9.jpg" alt="logo" />
-                <img onClick={()=>navigate('/')} className='h-10' src="/public/glam_text-removebg-preview.png" alt="logo" />
+                <img onClick={()=>navigate('/')} className='h-10' src="/glam_text-removebg-preview.png" alt="logo" />
                 <button onClick={() => {
                     LogoutAdmin().then(res => {
                         if (res.status === 200) {

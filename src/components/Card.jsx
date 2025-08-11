@@ -26,7 +26,7 @@ const Card = ({ r = "full", img, product }) => {
 
     return <div className={`py-2 w-[45vw]  hover:scale-90 transition-all flex flex-col items-center ease-in-out rounded`}>
         <div onClick={() => navigate(`/product/${product?._id}`)} className={` w-40 h-40 bg-red-100 overflow-hidden rounded-${r}`}>
-            <img className='h-full w-full object-cover object-center' src={product?.productimage[0] || img || "/public/default.png"} alt="product image" />
+            <img className='h-full w-full object-cover object-center' src={product?.productimage[0] || img || "/default.png"} alt="product image" />
         </div>
         <div onClick={() => navigate(`/product/${product?._id}`)} className="my-3 mx-2 w-full text-start px-2 capitalize ">
             {/* <h1 className='whitespace-nowrap' >{product?.title.length < 25 ? product.title : product.title.slice(0, 20) + "..."}</h1> */}

@@ -104,7 +104,7 @@ const CategoryPage = () => {
                 hasMore={hasMore}
                 loader={products.length >= 10 &&
                     <div className="flex justify-center w-full">
-                        <img className="h-18" src="/public/infinite scroll.gif" alt="loading..." />
+                        <img className="h-18" src="/infiniteScroll.gif" alt="loading..." />
                     </div>
                 }>
                 <div className="h-full w-full grid grid-cols-2 gap-4 mt-4 justify-items-center px-4 xs:px-0 max-xs:grid max-xs:grid-cols-1">
