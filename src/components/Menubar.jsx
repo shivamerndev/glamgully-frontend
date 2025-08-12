@@ -3,6 +3,7 @@ import { IoMdHome } from "react-icons/io";
 import { BiSolidDetail } from "react-icons/bi";
 import { MdContactPhone } from "react-icons/md";
 import { Link } from "react-router-dom";
+import { IoHome, IoHomeOutline } from "react-icons/io5";
 
 const Menubar = ({ setmenu }) => {
   const [current, setCurrent] = useState(0);
@@ -32,7 +33,7 @@ const Menubar = ({ setmenu }) => {
   };
 
   const list = [
-    { ic: <IoMdHome className="text-3xl" />, li: "home" },
+    { ic: <IoHome className="text-3xl" />, li: "home" },
     { ic: <BiSolidDetail className="text-3xl" />, li: "about" },
     { ic: <MdContactPhone className="text-3xl" />, li: "contact" },
   ];
@@ -41,7 +42,7 @@ const Menubar = ({ setmenu }) => {
     <div
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      className={`fixed top-20 z-30 h-full w-10/12 bg-yellow-100 text-zinc-700 text-xl transition-transform duration-300 ease-in-out
+      className={`fixed top-20 z-30 h-full w-2/3 bg-white text-zinc-700 text-xl transition-transform duration-300 ease-in-out
         ${hideMenu ? "-translate-x-full" : "translate-x-0"}`}
     >
       {list.map((l, i) => (
@@ -49,10 +50,11 @@ const Menubar = ({ setmenu }) => {
           to={`/${l.li === "home" ? "" : l.li}`}
           key={i}
           onClick={() => setmenu(false)}
-          className="flex px-4 items-center text-xl border-b border-gray-300"
-        >
+          className="flex px-4 text-lg items-center font-light  border-b border-gray-100">
+            <h1 className=" text-base w-8 h-9 font-bol">
           {l.ic}
-          <p className="px-4 my-3 font-semibold capitalize">{l.li}</p>
+            </h1>
+          <p className="px-4 my-2.5 font-semibold capitalize">{l.li}</p>
         </Link>
       ))}
     </div>

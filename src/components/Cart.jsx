@@ -9,10 +9,11 @@ import { FaArrowRightLong } from "react-icons/fa6";
 const Cart = () => {
     const navigate = useNavigate();
     let cart = JSON.parse(localStorage.getItem("cart"));
-    const [cartItems, setcartItems] = useState();
+    const [cartItems, setcartItems] = useState([]);
     const { setlengthc, singleProduct } = useContext(ProductDataContext);
     const [outstock, setoutstock] = useState({});
     const [warn, setWarn] = useState(false)
+    const [array, setarray] = useState([])
 
     useEffect(() => {
         setcartItems(cart);
@@ -22,32 +23,27 @@ const Cart = () => {
         };
     }, []);
 
-    useEffect(() => {
-        const checkStock = async () => {
-            let tempOutstock = {};
+    const checkStock = async () => {
+        let tempOutstock = {};
 
-            for (let item of cartItems) {
-                try {
-                    const p = await singleProduct(item._id);
-                    if (p.quantity < 1) {
-                        tempOutstock[p.title] = true;
-                    }
-                } catch (err) {
-                    console.error("Error checking product:", err);
+        for (let item of cartItems) {
+            try {
+                const p = await singleProduct(item._id);
+                if (p.quantity < 1) {
+                    tempOutstock[p.title] = true;
                 }
+            } catch (err) {
+                console.error("Error checking product:", err);
             }
-            setoutstock(tempOutstock);
-            if (warn) {
-                setWarn(Object.keys(tempOutstock).length > 0); //warn manage here.
-            }
-        };
-        if (cartItems) {
-            checkStock();
         }
-    }, [cartItems]);
+        setoutstock(tempOutstock);
+        if (warn) {
+            setWarn(Object.keys(tempOutstock).length > 0); //warn manage here.
+        }
+    };
 
     const estimatedTotal = cartItems?.reduce(
-        (total, item) => total + item.price * item.quantity,
+        (total, item) => total + item?.price * item?.quantity,
         0
     );
 
@@ -76,6 +72,10 @@ const Cart = () => {
         localStorage.setItem("cart", JSON.stringify(cart));
         setcartItems(cart);
     };
+
+    useEffect(() => {
+        checkStock();
+    }, [cartItems]);
 
     return cartItems ? (
         <div className="max-w-3xl mx-auto p-4 font-sans relative bg-white rounded-lg shadow-sm">

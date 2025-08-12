@@ -81,7 +81,7 @@ const Home = () => {
             ))}
 
             {arrowVisible && (
-              <div className="bg-[#ecececdd] z-50 rounded-full sticky h-fit p-2 top-1/4 right-0 cursor-pointer shadow-md">
+              <div className="bg-[#ecececdd] z-1 rounded-full sticky h-fit p-2 top-1/4 right-0 cursor-pointer shadow-md">
                 <IoChevronForward
                   onClick={() => {
                     if (cardsRef.current) {
@@ -101,7 +101,7 @@ const Home = () => {
           <h1 className="text-3xl my-5" >Best Seller</h1>
           <div ref={bestRef} id='cards' className="flex relative overflow-x-auto gap-3 w-full  ">
             {best && best?.map((p, i) => <div key={i}> <Card product={p} /></div>)}
-            {arrowVisible && (<div className="bg-[#ecececdd] z-100 rounded-full sticky h-fit p-2 top-1/4 right-0 justify-between">
+            {arrowVisible && (<div className="bg-[#ecececdd] z-1 rounded-full sticky h-fit p-2 top-1/4 right-0 justify-between">
               <IoChevronForward onClick={() => {
                 if (bestRef.current) {
                   bestRef.current.scrollBy({ left: 300, behavior: 'smooth' });

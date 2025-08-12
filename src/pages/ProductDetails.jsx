@@ -117,6 +117,14 @@ const ProductDetails = () => {
         }
     };
 
+    useEffect(() => {
+        if (p?.quantity < quantity) {
+            alert('enough quantity reached.')
+            setQuantity(p?.quantity);
+        }
+    }, [quantity, p])
+
+
     return (p && recp ?
         <div className="h-screen text-black w-full  px-3 pb-8">
 
@@ -140,7 +148,7 @@ const ProductDetails = () => {
                         {current + 1} / {p.productimage.length}
                     </div>
                 </div>
-                <div style={{color:p?.quantity <= 0 && "gray"}} className="w-full mt-2 rounded-lg space-y-3 text-gray-800 font-sans">
+                <div style={{ color: p?.quantity <= 0 && "gray" }} className="w-full mt-2 rounded-lg space-y-3 text-gray-800 font-sans">
                     <p className=" uppercase tracking-widest text-gray-400">GLAMGULLY</p>
                     <h1 className="text-3xl mb-0 font-medium">{p?.title}   </h1>
                     {p?.quantity <= 0 && <span className="text-red-600 text-base font-bold ">out of stock</span>}

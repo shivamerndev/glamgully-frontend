@@ -5,15 +5,19 @@ import Loader from '../../src/assets/loader.gif';
 import AdminNavbar from './AdminNavbar';
 import { useNavigate } from 'react-router-dom';
 import { CustomerDataContext } from '../context/CustomerContext'
+import { OrderDataContext } from '../context/OrderContext';
 
 const AdminPanel = () => {
   const { allCustomers } = useContext(CustomerDataContext)
+  const { readOrder } = useContext(OrderDataContext)
   const [customer, setCustomer] = useState([])
   const { getProductsAdmin, editProduct } = useContext(ProductDataContext)
   const navigate = useNavigate()
   const [products, setProducts] = useState([])
   const [showModal, setShowModal] = useState(false);
   const [isActiveState, setIsActiveState] = useState({})
+  const [Totalorder, setTotalorder] = useState(null)
+  const [TotalSales, setTotalSales] = useState(0)
 
 
   const handleBackdropClick = (e) => {
@@ -38,7 +42,19 @@ const AdminPanel = () => {
       console.log(err);
       setCustomer([])
     })
+    readOrder().then(res => {
+      setTotalorder(res)
+    }).catch(err => {
+      console.log(err);
+    })
   }, [])
+
+  useEffect(() => {
+    let sales = Totalorder?.reduce((acc, e) => acc + parseInt(e.price), 0)
+    setTotalSales(sales);
+  }, [Totalorder])
+
+  // console.log("total sales and order form backend.");
 
   return (products ?
     <div className="flex flex-col pt-19  lg:flex-row h-screen bg-gray-100">
@@ -50,19 +66,19 @@ const AdminPanel = () => {
         <div className="grid grid-cols-2 p-4 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="bg-white p-4 rounded-xl shadow text-center">
             <p className="text-sm text-gray-500">Total Sales</p>
-            <p className="text-xl font-bold">₹00.00</p>
+            <p className="text-xl font-bold">₹{TotalSales}.00</p>
           </div>
           <div className="bg-white p-4 rounded-xl shadow text-center">
             <p className="text-sm text-gray-500">Total Orders</p>
-            <p className="text-xl font-bold">0</p>
+            <p className="text-xl font-bold">{Totalorder?.length || 0}</p>
           </div>
           <div className="bg-white p-4 rounded-xl shadow text-center">
             <p className="text-sm text-gray-500">Total Customers</p>
-            <p className="text-xl font-bold">0</p>
+            <p className="text-xl font-bold">{customer?.length || 0}</p>
           </div>
           <div className="bg-white p-4 rounded-xl shadow text-center">
-            <p className="text-sm text-gray-500">Total</p>
-            <p className="text-xl font-bold">0</p>
+            <p className="text-sm text-gray-500">Total Products</p>
+            <p className="text-xl font-bold">{products?.length || 0}</p>
           </div>
         </div>
 
@@ -120,8 +136,8 @@ const AdminPanel = () => {
                     >
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-semibold ${(isActiveState[p._id] ?? p.isActive)
-                            ? "bg-green-100 text-green-700"
-                            : "bg-red-100 text-red-700"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
                           }`}
                       >
                         {(isActiveState[p._id] ?? p.isActive) ? "Active" : "Inactive"}
@@ -146,7 +162,7 @@ const AdminPanel = () => {
         <section>
           <h2 className="text-xl md:text-2xl font-semibold px-4 mb-4">Customer Management</h2>
           {customer.length > 0 ? <div className="overflow-x-auto bg-white shadow rounded-xl">
-            <table className="min-w-full text-left">
+            <table className="min-w-full text-center mb-2 ">
               <thead className="bg-gray-100">
                 <tr>
                   <th className="px-4 py-2">Name</th>

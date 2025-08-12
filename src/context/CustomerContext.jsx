@@ -12,8 +12,7 @@ const CustomerContext = ({ children }) => {
             let res = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/create`, data)
             return res.data;
         } catch (error) {
-            console.log(error);
-
+            alert(error?.response?.data);
         }
     }
     const allCustomers = async () => {

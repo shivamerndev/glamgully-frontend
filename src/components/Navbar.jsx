@@ -1,12 +1,11 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import Menubar from './Menubar';
 import { IoIosSearch } from "react-icons/io";
 import { LuShoppingCart } from "react-icons/lu";
 import { RiMenu2Fill } from "react-icons/ri";
-import { Link, replace, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ProductDataContext } from '../context/ProductContext';
-import { addToCart, getCart } from '../utils/local.cart';
-
+import { RxCross1 } from "react-icons/rx";
 
 const Navbar = () => {
     const [menu, setmenu] = useState(false);
@@ -14,7 +13,6 @@ const Navbar = () => {
     const searchRef = useRef(null);
     const [stext, setStext] = useState("")
     const [suggest, setSuggest] = useState(null)
-    const navigate = useNavigate()
     const { searchProduct, lengthc } = useContext(ProductDataContext)
 
     useEffect(() => {
@@ -51,7 +49,8 @@ const Navbar = () => {
         <>
             {menu && <Menubar setmenu={setmenu} />}
             <nav className="w-full z-10 fixed bg-white top-0 flex  items-center justify-between py-3 px-4 text-2xl ">
-                <RiMenu2Fill onClick={() => setmenu(!menu)} />
+                {!menu && <RiMenu2Fill onClick={() => setmenu(true)} />}
+                {menu && <RxCross1 onClick={() => setmenu(false)} />}
                 {search && <div ref={searchRef} className='  absolute font-semibold left-[15%] h-full content-center z-50'>
                     <input id='search' value={stext} onChange={(e) => setStext(e.target.value)} autoFocus type="txt" placeholder='Search'
                         className='outline-none text-xl font-normal bg-white border w-[70vw] border-zinc-900 rounded-md px-3 py-1 mt-1' />

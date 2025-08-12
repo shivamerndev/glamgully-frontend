@@ -17,6 +17,7 @@ import Cart from './components/Cart.jsx'
 import { ProductDataContext } from './context/ProductContext.jsx'
 import ProductsPage from './Admin/ProductsPage.jsx'
 import CustomersPage from './Admin/CustomersPage.jsx'
+import OrderContext from './context/OrderContext.jsx'
 
 const App = () => {
   const location = useLocation()
@@ -39,22 +40,22 @@ const App = () => {
       <Routes>
         <Route path='/admin/register' element={<Register />} />
         <Route path='/admin/login' element={<Login />} />
-        <Route path="/admin/glamgully" element={<AdminProtected><AdminPanel /></AdminProtected>} />
-        <Route path="/admin/glamgully/products" element={<AdminProtected><ProductsPage /></AdminProtected>} />
-        <Route path="/admin/glamgully/customers" element={<AdminProtected><CustomersPage /></AdminProtected>} />
-        <Route path="/" element={<Home />} />
-        <Route path='/about' element={<About />} />
-        <Route path='/contact' element={<Contact />} />
-        <Route path='/product/:productId' element={<ProductDetails />} />
-        <Route path='/checkout/:productId' element={<CheckoutForm />} />
-        <Route path='/checkout/cart' element={<CheckoutForm />} />
-        <Route path='/checkout/order/:productId' element={<OrderSummary />} />
-        <Route path='/checkout/order/cart' element={<OrderSummary />} />
-        <Route path='/category/:productname' element={<CategoryPage />} />
-        <Route path='/product/all' element={<CategoryPage />} />
-        <Route path='/cart' element={<Cart />} />
-      </Routes>
-    </div>
+        <Route path="/admin/glamgully" element={<OrderContext><AdminProtected><AdminPanel /></AdminProtected></OrderContext>} />
+      <Route path="/admin/glamgully/products" element={<AdminProtected><ProductsPage /></AdminProtected>} />
+      <Route path="/admin/glamgully/customers" element={<AdminProtected><CustomersPage /></AdminProtected>} />
+      <Route path="/" element={<Home />} />
+      <Route path='/about' element={<About />} />
+      <Route path='/contact' element={<Contact />} />
+      <Route path='/product/:productId' element={<ProductDetails />} />
+      <Route path='/checkout/:productId' element={<OrderContext><CheckoutForm /></OrderContext>} />
+      <Route path='/checkout/cart' element={<OrderContext><CheckoutForm /></OrderContext>} />
+      <Route path='/checkout/order/:productId' element={<OrderContext><OrderSummary /></OrderContext>} />
+      <Route path='/checkout/order/cart' element={<OrderContext><OrderSummary /></OrderContext>} />
+      <Route path='/category/:productname' element={<CategoryPage />} />
+      <Route path='/product/all' element={<CategoryPage />} />
+      <Route path='/cart' element={<Cart />} />
+    </Routes>
+    </div >
   )
 }
 

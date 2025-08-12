@@ -19,9 +19,8 @@ const CustomersPage = () => {
     return (
         <div>
             <AdminNavbar focus={'Customers'} />
-            <div className="flex flex-col pt-30 px-4  lg:flex-row h-screen bg-gray-100">
-                {customer.length > 1 ? <section >
-                    <h2 className="text-xl md:text-2xl font-semibold mb-5">Customer Management</h2>
+            <div className="flex flex-col pt-25 px-4  lg:flex-row h-screen bg-gray-100">
+                {customer.length >= 1 ? <section >
                     <div className="overflow-x-auto bg-white shadow rounded-xl">
                         <table className="min-w-full text-center">
                             <thead className="bg-gray-100">

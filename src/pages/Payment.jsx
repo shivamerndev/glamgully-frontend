@@ -1,11 +1,12 @@
 import axios from "axios";
 
 // handlePayment Function
-export const handlePayment = async (amount, address, createCustomer, editQuantity) => {
+export const handlePayment = async (amount, address, createCustomer, editQuantity, product, CreateOrderFunction) => {
     try {
         const orderres = await axios.post(`${import.meta.env.VITE_BASE_URL}/pay/order`, { amount: amount * 100 });
         const data = orderres.data.order;
-        handlePaymentVerify(data, address, createCustomer, editQuantity);
+        handlePaymentVerify(data, address, createCustomer, editQuantity, product, CreateOrderFunction);
+
     } catch (error) {
         console.log(error);
     }
@@ -19,7 +20,7 @@ const formatAddress = (addr) => {
 // const ReadableString = (address) => Object.entries(address).map(([key, value]) => `${key === "address" ? key + " - " + value : value} `).join("\n");
 
 // verifyPayment Function
-const handlePaymentVerify = (data, address, createCustomer, editQuantity) => {
+const handlePaymentVerify = (data, address, createCustomer, editQuantity, product, CreateOrderFunction) => {
     const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Enter the Key ID generated from the Dashboard
         amount: data.amount,
@@ -33,9 +34,13 @@ const handlePaymentVerify = (data, address, createCustomer, editQuantity) => {
                     razorpay_payment_id: response.razorpay_payment_id,
                     razorpay_order_id: response.razorpay_order_id,
                     razorpay_signature: response.razorpay_signature,
+                    amount: data.amount,
+                    address: address,
+                    products: product
                 });
-                createCustomer({ fullname: address.fullname, phone: address.phone })
+                createCustomer({ fullname: address.fullname, phone: address.phone.slice(-10) })
                 editQuantity();
+                CreateOrderFunction();
             } catch (error) {
                 console.error("Payment verification failed:", error);
             }

@@ -4,6 +4,7 @@ import { CustomerDataContext } from "../context/CustomerContext";
 import { data, useLocation, useNavigate, useParams } from "react-router-dom";
 import { IoIosArrowDown } from "react-icons/io";
 import { handlePayment } from "../pages/Payment"
+import { OrderDataContext } from "../context/OrderContext";
 
 
 const OrderSummary = ({ toggleHandle, isOpen = true }) => {
@@ -13,13 +14,14 @@ const OrderSummary = ({ toggleHandle, isOpen = true }) => {
     const { productId } = useParams()
     const { singleProduct, editProduct } = useContext(ProductDataContext)
     const { createCustomer } = useContext(CustomerDataContext);
+    const { createOrder } = useContext(OrderDataContext);
     const [product, setproduct] = useState()
     const [amount, setamount] = useState()
     const [buyquantity, setbuyquantity] = useState(1)
     const productfromCart = JSON.parse(localStorage.getItem("cart"))
 
     useEffect(() => {
-        setbuyquantity(productId?.split('&')[1])
+        setbuyquantity(productId?.split('&')[1]) 
     }, [])
 
     useEffect(() => {
@@ -57,6 +59,16 @@ const OrderSummary = ({ toggleHandle, isOpen = true }) => {
         }
     }
 
+    const CreateOrderFunction = () => {
+        if (product.length) {
+            const quantity = product.reduce((acc, item) => acc + item.quantity, 0)
+            const title = product.reduce((acc, item) => acc + item.title + "\n", 0)
+            createOrder({ title: title, price: amount, stock: quantity })
+        }
+        else {
+            createOrder({ title: product.title && product.title, price: amount, stock: buyquantity })
+        }
+    }
 
     return (product &&
         <div className="max-w-md mx-auto my-2  text-lg bg-zinc-100  rounded shadow">
@@ -140,7 +152,7 @@ const OrderSummary = ({ toggleHandle, isOpen = true }) => {
                     </div>
                     {!toggleHandle && <button onClick={() => {
                         if (customerAddress) {
-                            handlePayment(amount, customerAddress, createCustomer, editQuantity)
+                            handlePayment(amount, customerAddress, createCustomer, editQuantity, product, CreateOrderFunction)
                         } else {
                             confirm("Please fill the address details before proceeding to payment.");
                             navigate(-1)
