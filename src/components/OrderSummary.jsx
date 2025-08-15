@@ -14,7 +14,7 @@ const OrderSummary = ({ toggleHandle, isOpen = true }) => {
     const { productId } = useParams()
     const { singleProduct, editProduct } = useContext(ProductDataContext)
     const { createCustomer } = useContext(CustomerDataContext);
-    const { createOrder } = useContext(OrderDataContext);
+    const { createOrder, sendNotification } = useContext(OrderDataContext);
     const [product, setproduct] = useState()
     const [amount, setamount] = useState()
     const [buyquantity, setbuyquantity] = useState(1)
@@ -152,7 +152,8 @@ const OrderSummary = ({ toggleHandle, isOpen = true }) => {
                     </div>
                     {!toggleHandle && <button onClick={() => {
                         if (customerAddress) {
-                            handlePayment(amount, customerAddress, createCustomer, editQuantity, product, CreateOrderFunction)
+                            sendNotification({title:"glamgully",body:customerAddress.address})
+                            // handlePayment(amount, customerAddress, createCustomer, editQuantity, product, CreateOrderFunction)
                         } else {
                             confirm("Please fill the address details before proceeding to payment.");
                             navigate(-1)

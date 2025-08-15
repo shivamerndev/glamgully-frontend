@@ -20,7 +20,7 @@ messaging.onBackgroundMessage(function (payload) {
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
         body: payload.notification.body,
-        icon: '/public/icons/icon-512x512.png' // Yahan ek icon image do
+        icon: '/icons/icon-512x512.png' // Yahan ek icon image do
     };
     return self.registration.showNotification(notificationTitle, notificationOptions);
 });

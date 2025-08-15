@@ -23,8 +23,17 @@ const OrderContext = ({ children }) => {
         }
     }
 
+    const sendNotification = async (data) => {
+        try {
+            const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/send-notification`, data)
+          return (res.data);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    
     return (
-        <OrderDataContext.Provider value={{ createOrder, readOrder }}>
+        <OrderDataContext.Provider value={{ createOrder, readOrder, sendNotification}}>
             {children}
         </OrderDataContext.Provider>
     )
