@@ -6,6 +6,8 @@ import AdminNavbar from './AdminNavbar';
 import { useNavigate } from 'react-router-dom';
 import { CustomerDataContext } from '../context/CustomerContext'
 import { OrderDataContext } from '../context/OrderContext';
+import { getOrRenewToken, onForegroundMessage } from '../firebase.js';
+import axios from 'axios';
 
 const AdminPanel = () => {
   const { allCustomers } = useContext(CustomerDataContext)
@@ -19,6 +21,16 @@ const AdminPanel = () => {
   const [Totalorder, setTotalorder] = useState(null)
   const [TotalSales, setTotalSales] = useState(0)
 
+  useEffect(() => {
+    const setupNotifications = async () => {
+      const token = await getOrRenewToken();
+      if (token) {
+        axios.post(`${import.meta.env.VITE_BASE_URL}/api/subscribe`, { token });
+      }
+    };
+    setupNotifications();
+    onForegroundMessage();
+  }, []);
 
   const handleBackdropClick = (e) => {
     if (e.target.id === "modal-backdrop") {
@@ -50,8 +62,10 @@ const AdminPanel = () => {
   }, [])
 
   useEffect(() => {
-    let sales = Totalorder?.reduce((acc, e) => acc + parseInt(e.price), 0)
-    setTotalSales(sales);
+    if (TotalSales) {
+      let sales = Totalorder?.reduce((acc, e) => acc + parseInt(e.price), 0)
+      setTotalSales(sales);
+    }
   }, [Totalorder])
 
   // console.log("total sales and order form backend.");
