@@ -21,7 +21,7 @@ const ProductContext = ({ children }) => {
             console.log(error?.response?.data)
         }
     }
-    const getProducts = async (page, limit,sort) => {
+    const getProducts = async (page, limit, sort) => {
         try {
             const response = await axiosProductInstance.get(`/getproduct?page=${page}&limit=${limit}&sort=${sort}`);
             return (response.data);
@@ -82,11 +82,45 @@ const ProductContext = ({ children }) => {
             console.error(error.message)
         }
     }
+    const categoryProduct = async () => {
+        try {
+            const response = await axiosProductInstance.get(`/find/category`)
+            return (response.data);
+
+        } catch (error) {
+            console.error(error)
+        }
+    }
+    const archiveCategory = async (category) => {
+        try {
+            const response = await axiosProductInstance.post(`/archive/category`, {category})
+            return (response.data);
+        } catch (error) {
+            console.log(error.message);
+
+        }
+    }
+    const activeCategory = async (category) => {
+        try {
+            const response = await axiosProductInstance.post(`/active/category`, { category })
+            return (response.data);
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+     const categoryPublic = async () => {
+        try {
+            const response = await axiosProductInstance.get(`/find/category/public`)
+            return (response.data);
+        } catch (error) {
+            console.error(error)
+        }
+    }
     const [lengthc, setlengthc] = useState(0)
 
     return (
         <>
-            <ProductDataContext.Provider value={{ bestSellingProducts,lengthc, setlengthc, searchProduct, createProduct, getProducts, getProductsAdmin, singleProduct, editProduct, deleteProduct }}>
+            <ProductDataContext.Provider value={{ categoryPublic,activeCategory, archiveCategory, categoryProduct, bestSellingProducts, lengthc, setlengthc, searchProduct, createProduct, getProducts, getProductsAdmin, singleProduct, editProduct, deleteProduct }}>
                 {children}
             </ProductDataContext.Provider>
         </>

@@ -1,7 +1,7 @@
-import React, { useActionState, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ProductDataContext } from "../context/ProductContext";
 import { CustomerDataContext } from "../context/CustomerContext";
-import { data, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { IoIosArrowDown } from "react-icons/io";
 import { handlePayment } from "../pages/Payment"
 import { OrderDataContext } from "../context/OrderContext";
@@ -18,10 +18,11 @@ const OrderSummary = ({ toggleHandle, isOpen = true }) => {
     const [product, setproduct] = useState()
     const [amount, setamount] = useState()
     const [buyquantity, setbuyquantity] = useState(1)
+    const [cartquantity, setcartquantity] = useState(1)
     const productfromCart = JSON.parse(localStorage.getItem("cart"))
 
     useEffect(() => {
-        setbuyquantity(productId?.split('&')[1]) 
+        setbuyquantity(productId?.split('&')[1])
     }, [])
 
     useEffect(() => {
@@ -59,14 +60,16 @@ const OrderSummary = ({ toggleHandle, isOpen = true }) => {
         }
     }
 
-    const CreateOrderFunction = () => {
+    const CreateOrderFunction = (product) => {
         if (product.length) {
             const quantity = product.reduce((acc, item) => acc + item.quantity, 0)
             const title = product.reduce((acc, item) => acc + item.title + "\n", 0)
             createOrder({ title: title, price: amount, stock: quantity })
+            sendNotification({ title: "glamgully", body: ` NEW ORDER RECIEVED✅\n ₹${amount} : ${quantity}*qty. ` })
         }
         else {
             createOrder({ title: product.title && product.title, price: amount, stock: buyquantity })
+            sendNotification({ title: "glamgully", body: ` NEW ORDER RECIEVED✅\n ₹${amount} : ${buyquantity}*qty. ` })
         }
     }
 
@@ -152,8 +155,7 @@ const OrderSummary = ({ toggleHandle, isOpen = true }) => {
                     </div>
                     {!toggleHandle && <button onClick={() => {
                         if (customerAddress) {
-                            sendNotification({title:"glamgully",body:customerAddress.address})
-                            // handlePayment(amount, customerAddress, createCustomer, editQuantity, product, CreateOrderFunction)
+                            handlePayment(amount, customerAddress, createCustomer, editQuantity, product, CreateOrderFunction)
                         } else {
                             confirm("Please fill the address details before proceeding to payment.");
                             navigate(-1)

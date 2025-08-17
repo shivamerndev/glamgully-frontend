@@ -6,16 +6,20 @@ import { ProductDataContext } from "../context/ProductContext";
 import { MdArrowLeft, MdArrowRight } from "react-icons/md";
 import BannerCarousel from "../components/BannerCarousel";
 import { IoChevronForward } from "react-icons/io5";
+import { CustomerDataContext } from "../context/CustomerContext";
 
 
 const Home = () => {
   const { getProducts, bestSellingProducts } = useContext(ProductDataContext)
+  const {readReviewsImg} = useContext(CustomerDataContext)
   const [products, setProducts] = useState(null)
   const [best, setBest] = useState(null)
   const [current, setcurrent] = useState(0)
   const cardsRef = useRef(null);
   const bestRef = useRef(null);
   const [arrowVisible, setArrowVisible] = useState(true);
+  const [activeIndex, setActiveIndex] = useState(null);
+  const [reviewImg,setreviewImg] = useState(null)
 
   const categories = [...new Set(products?.map(p => p.category.trim()))]
 
@@ -46,13 +50,18 @@ const Home = () => {
     }, 3000);
     setIntervalId(id);
     return () => clearInterval(id);
-  }, []);
+  }, [])
 
   const [scaled, setScaled] = useState(false);
   useEffect(() => {
     const timeout = setTimeout(() => setScaled(true), 100); // slight delay for effect
     return () => clearTimeout(timeout);
-  }, []);
+  }, [])
+
+  useEffect(() => {
+    readReviewsImg().then(res=>setreviewImg(res))
+  }, [])
+  
 
   return (products ?
     <div className="bg-white min-h-screen w-full text-black">
@@ -130,21 +139,25 @@ const Home = () => {
             })}
 
           </div>
-          <h1 className="text-3xl my-6 font-semibold text-gray-800">
+          <h1 className="text-3xl mt-6 font-semibold text-gray-800">
             Customer Reviews
           </h1>
 
-          <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
-            {[...Array(6)].map((_, i) => (
+          <div className="flex gap-4  items-center overflow-x-auto  h-[60vw] relative">
+            {reviewImg && reviewImg?.map((r, i) => (
               <div
+                onClick={() => setActiveIndex(i)}
                 key={i}
-                className="w-2/4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 flex-shrink-0"
-              >
-                {/* Review Image */}
+                className={`
+            w-[30vw] h-[40vw] rounded-xl shadow-md flex-shrink-0 cursor-pointer 
+            transition-all duration-100 ease-in-out
+            ${activeIndex === i
+                    ? "-translate-y-6 scale-120 shadow-xl"   // active state
+                    : "translate-y-0 scale-100"}`}>
                 <img
-                  src={`https://randomuser.me/api/portraits/men/${i + 10}.jpg`}
+                  src={r.reviewpicture}
                   alt="Customer"
-                  className="w-full h-50 object-cover rounded-t-xl"
+                  className="w-full h-full object-cover rounded-xl"
                 />
               </div>
             ))}

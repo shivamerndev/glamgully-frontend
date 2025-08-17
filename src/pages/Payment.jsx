@@ -6,7 +6,6 @@ export const handlePayment = async (amount, address, createCustomer, editQuantit
         const orderres = await axios.post(`${import.meta.env.VITE_BASE_URL}/pay/order`, { amount: amount * 100 });
         const data = orderres.data.order;
         handlePaymentVerify(data, address, createCustomer, editQuantity, product, CreateOrderFunction);
-
     } catch (error) {
         console.log(error);
     }
@@ -16,8 +15,6 @@ const formatAddress = (addr) => {
     const { address, landmark, city, state, pincode } = addr;
     return `${address}, ${landmark || ""}, ${city}, ${state} - ${pincode}`;
 };
-
-// const ReadableString = (address) => Object.entries(address).map(([key, value]) => `${key === "address" ? key + " - " + value : value} `).join("\n");
 
 // verifyPayment Function
 const handlePaymentVerify = (data, address, createCustomer, editQuantity, product, CreateOrderFunction) => {
@@ -38,9 +35,9 @@ const handlePaymentVerify = (data, address, createCustomer, editQuantity, produc
                     address: address,
                     products: product
                 });
-                createCustomer({ fullname: address.fullname, phone: address.phone.slice(-10) })
+                createCustomer({ fullname: address.fname + address.lname, phone: address.phone.slice(-10) })
                 editQuantity();
-                CreateOrderFunction();
+                CreateOrderFunction(product);
             } catch (error) {
                 console.error("Payment verification failed:", error);
             }

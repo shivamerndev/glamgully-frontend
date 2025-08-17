@@ -7,13 +7,17 @@ const CheckoutForm = () => {
     const { productId } = useParams()
     const [isOpen, setIsOpen] = useState(false);
     const toggleHandle = () => { setIsOpen(!isOpen) }
-    const obj = { fullname: "", address: "", landmark: "", city: "", state: "mumbai", pincode: "", phone: "", country: "india" }
+    const obj = { fname: "", lname: "", address: "", landmark: "", city: "", state: "mumbai", pincode: "", phone: "", country: "india" }
     const [af, setaddform] = useState(obj)
 
 
     const handleNextBtn = (e) => {
         try {
             e.preventDefault();
+            if (af.phone.length > 10 ) {
+                alert("Phone must be 10 digits only.")
+                return;
+            }
             navigate(`/checkout/order/${productId || "cart"}`, {
                 state: { address: af }
             })
@@ -35,13 +39,13 @@ const CheckoutForm = () => {
                     </select>
 
                     <div className="flex gap-3">
-                        <input onChange={(e) => setaddform({ ...af, fullname: e.target.value })} required value={af.first}
+                        <input onChange={(e) => setaddform({ ...af, fname: e.target.value })} required value={af.first}
 
                             type="text"
                             placeholder="First name"
                             className="w-1/2   rounded-lg px-3 py-2"
                         />
-                        <input onChange={(e) => setaddform({ ...af, fullname: (af.fullname + " " + e.target.value) })} required value={af.last}
+                        <input onChange={(e) => setaddform({ ...af, lname: e.target.value })} required value={af.last}
                             type="text"
                             placeholder="Last name"
                             className="w-1/2  rounded-lg px-3 py-2"
@@ -76,9 +80,9 @@ const CheckoutForm = () => {
                         placeholder="PIN code"
                         className="w-full  rounded-lg px-3 py-2" />
                     <input onChange={(e) => setaddform({ ...af, phone: e.target.value })} required value={af.phone}
-                        type="text"
+                        type="number"
                         placeholder="Phone"
-                        className="w-full  rounded-lg px-3 py-2" />
+                        className={`w-full ${af.phone.length > 10 && "text-red-500"} rounded-lg px-3 py-2`} />
                 </div>
 
                 {/* <label className="inline-flex items-center text-sm mt-4">

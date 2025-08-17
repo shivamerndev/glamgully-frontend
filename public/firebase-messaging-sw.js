@@ -16,7 +16,7 @@ firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage(function (payload) {
-    console.log(' Received background message ', payload);
+    console.log('bg msg :', payload);
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
         body: payload.notification.body,
@@ -37,7 +37,7 @@ self.addEventListener('install', event => {
       ]);
     })
   );
-  console.log("Service Worker Installed");
+  console.log("SW Installed");
 });
 
 self.addEventListener('fetch', event => {

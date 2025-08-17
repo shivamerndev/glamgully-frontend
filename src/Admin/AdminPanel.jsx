@@ -8,18 +8,25 @@ import { CustomerDataContext } from '../context/CustomerContext'
 import { OrderDataContext } from '../context/OrderContext';
 import { getOrRenewToken, onForegroundMessage } from '../firebase.js';
 import axios from 'axios';
+import { FaShoppingBag, FaUsers, FaBoxOpen, FaRupeeSign } from "react-icons/fa";
+
 
 const AdminPanel = () => {
-  const { allCustomers } = useContext(CustomerDataContext)
+  const { allCustomers, createReviewImg } = useContext(CustomerDataContext)
   const { readOrder } = useContext(OrderDataContext)
   const [customer, setCustomer] = useState([])
-  const { getProductsAdmin, editProduct } = useContext(ProductDataContext)
+  const { getProductsAdmin, editProduct, categoryProduct, categoryPublic, archiveCategory, activeCategory } = useContext(ProductDataContext)
   const navigate = useNavigate()
   const [products, setProducts] = useState([])
   const [showModal, setShowModal] = useState(false);
   const [isActiveState, setIsActiveState] = useState({})
   const [Totalorder, setTotalorder] = useState(null)
   const [TotalSales, setTotalSales] = useState(0)
+  const [category, setcategory] = useState(null)
+  const [categoryp, setcategoryp] = useState(null)
+  const [archive, setArchive] = useState({})
+
+ 
 
   useEffect(() => {
     const setupNotifications = async () => {
@@ -55,20 +62,71 @@ const AdminPanel = () => {
       setCustomer([])
     })
     readOrder().then(res => {
-      setTotalorder(res)
+      setTotalorder(res.total)
     }).catch(err => {
       console.log(err);
     })
   }, [])
 
   useEffect(() => {
-    if (TotalSales) {
+    if (Totalorder) {
       let sales = Totalorder?.reduce((acc, e) => acc + parseInt(e.price), 0)
+
       setTotalSales(sales);
     }
   }, [Totalorder])
 
-  // console.log("total sales and order form backend.");
+  useEffect(() => {
+    categoryProduct().then(res => {
+      setcategory(res)
+    }).catch(err => {
+      console.log(err);
+    })
+
+  }, [])
+
+  useEffect(() => {
+    categoryPublic().then(res => {
+      setcategoryp(res)
+    }).catch(err => {
+      console.log(err);
+    })
+
+  }, [])
+
+  useEffect(() => {
+    if (categoryp) {
+      const archiveObj = {};
+      categoryp.forEach(c => {
+        archiveObj[c] = true;
+      });
+      setArchive(archiveObj);
+    }
+  }, [categoryp]);
+
+
+  const [image, setImage] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+
+  // File select handler
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file)
+      setImage(URL.createObjectURL(file)); // preview banane ke liye blob url
+    }
+  };
+
+  // Drag drop handle for laptop/desktop
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      setImageFile(file)
+      setImage(URL.createObjectURL(file));
+    }
+  };
+
 
   return (products ?
     <div className="flex flex-col pt-19  lg:flex-row h-screen bg-gray-100">
@@ -77,22 +135,41 @@ const AdminPanel = () => {
       <main className="flex-1  pt-15 md:p-8 overflow-y-auto">
         <h1 className="text-2xl md:text-3xl  font-semibold px-4 mb-2">Dashboard</h1>
         {/* Summary Cards */}
-        <div className="grid grid-cols-2 p-4 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white p-4 rounded-xl shadow text-center">
-            <p className="text-sm text-gray-500">Total Sales</p>
-            <p className="text-xl font-bold">₹{TotalSales}.00</p>
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 p-4">
+          {/* Total Sales */}
+          <div className="bg-gradient-to-r from-green-400 to-green-600 p-5 rounded-2xl shadow-lg text-white transform hover:scale-105 transition-transform duration-300">
+            <p className="text-sm opacity-80 mb-2">Total Sales</p>
+            <div className="flex items-center space-x-1">
+              <FaRupeeSign size={25} />
+              <p className="text-2xl font-bold">{TotalSales}.00</p>
+            </div>
           </div>
-          <div className="bg-white p-4 rounded-xl shadow text-center">
-            <p className="text-sm text-gray-500">Total Orders</p>
-            <p className="text-xl font-bold">{Totalorder?.length || 0}</p>
+
+          {/* Total Orders */}
+          <div onClick={() => navigate('/admin/glamgully/orders')} className="bg-gradient-to-r from-blue-400 to-blue-600 p-5 rounded-2xl shadow-lg text-white transform hover:scale-105 transition-transform duration-300">
+            <p className="text-sm opacity-80 mb-2">Total Orders</p>
+            <div className="flex items-center space-x-3">
+              <FaShoppingBag size={30} />
+              <p className="text-2xl font-bold">{Totalorder?.length || 0}</p>
+            </div>
           </div>
-          <div className="bg-white p-4 rounded-xl shadow text-center">
-            <p className="text-sm text-gray-500">Total Customers</p>
-            <p className="text-xl font-bold">{customer?.length || 0}</p>
+
+          {/* Total Customers */}
+          <div onClick={() => navigate('/admin/glamgully/customers')} className="bg-gradient-to-r from-purple-400 to-purple-600 p-5 rounded-2xl shadow-lg text-white transform hover:scale-105 transition-transform duration-300">
+            <p className="text-sm opacity-80 mb-2">Total Customers</p>
+            <div className="flex items-center space-x-3">
+              <FaUsers size={30} />
+              <p className="text-2xl font-bold">{customer?.length || 0}</p>
+            </div>
           </div>
-          <div className="bg-white p-4 rounded-xl shadow text-center">
-            <p className="text-sm text-gray-500">Total Products</p>
-            <p className="text-xl font-bold">{products?.length || 0}</p>
+
+          {/* Total Products */}
+          <div onClick={() => navigate('/admin/glamgully/products')} className="bg-gradient-to-r from-pink-400 to-pink-600 p-5 rounded-2xl shadow-lg text-white transform hover:scale-105 transition-transform duration-300">
+            <p className="text-sm opacity-80 mb-2">Total Products</p>
+            <div className="flex items-center space-x-3">
+              <FaBoxOpen size={30} />
+              <p className="text-2xl font-bold">{products?.length || 0}</p>
+            </div>
           </div>
         </div>
 
@@ -172,8 +249,27 @@ const AdminPanel = () => {
           {products.length > 5 && <button onClick={() => navigate('/admin/glamgully/products')} className="inline-block mt-4 cursor-pointer bg-sky-500 text-gray-100 rounded h-7 text-center px-3 ">view all</button>}
         </section>
 
+        {/* Category Management */}
+        <section className=' px-3 mb-10 '>
+          <h2 className="text-xl md:text-2xl font-semibold mb-6">Category Management</h2>
+          {category && category.map((c, i) => <div key={i} className={`flex my-1 justify-between items-center font-semibold  ${archive[c] ? "bg-gray-900 text-yellow-500" : "bg-black text-yellow-500"} px-3 rounded-md py-3 text-lg `}>
+            <h1 className=' uppercase '>{c}</h1>
+            <button onClick={() => {
+              if (archive[c]) {
+                archiveCategory(c);
+                setArchive(prev => ({ ...prev, [c]: false }));
+              } else {
+                activeCategory(c);
+                setArchive(prev => ({ ...prev, [c]: true }));
+              }
+            }} className={`px-3 py-1 rounded-full uppercase text-sm  ${archive[c] ? "bg-red-500" : "bg-green-500"} text-white  font-semibold`}>
+              {archive[c] ? "archive" : "unarchive"}
+            </button>
+          </div>)}
+        </section>
+
         {/* Customer Management */}
-        <section>
+        <section className='my-4'>
           <h2 className="text-xl md:text-2xl font-semibold px-4 mb-4">Customer Management</h2>
           {customer.length > 0 ? <div className="overflow-x-auto bg-white shadow rounded-xl">
             <table className="min-w-full text-center mb-2 ">
@@ -193,8 +289,50 @@ const AdminPanel = () => {
             {customer.length > 5 && <button onClick={() => navigate('/admin/glamgully/customers')} className="inline-block my-4 mx-4 cursor-pointer bg-sky-500 text-gray-100 rounded h-7 text-center px-3 ">view all</button>}
           </div> : <h1 className='w-full text-center pb-5 text-red-500 font-semibold'>No Customers </h1>}
         </section>
+
+        {/* Reviews Management */}
+        <section className="px-3 mb-10">
+          <h2 className="text-xl md:text-2xl px-2 font-semibold mb-6">
+            Reviews Management
+          </h2>
+
+          {/* Upload Box */}
+          <div
+            className="h-50 w-full border border-dashed rounded-xl flex flex-col justify-center items-center cursor-pointer transition hover:border-cyan-400 hover:bg-cyan-50"
+            onDrop={handleDrop}
+            onDragOver={(e) => e.preventDefault()}
+            onClick={() => document.getElementById("fileInput").click()}
+          >
+            {!image ? (
+              <>
+                <h1 className="h-16 w-16 flex items-center justify-center rounded-full border-2 border-gray-400  text-3xl text-black/55 mb-3">
+                  +
+                </h1>
+                <p className="text-gray-500">Click or Drag & Drop to Upload</p>
+              </>
+            ) : (
+              <img
+                src={image}
+                alt="Preview"
+                className="max-h-10/12 max-w-full object-cover object-top rounded"
+              />
+            )}
+
+            {/* Hidden File Input */}
+            <input
+              id="fileInput"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange} />
+          </div>
+          <button onClick={() => { createReviewImg(imageFile) }} className={`px-2 py-1.5 rounded-md mt-4 uppercase text-sm   bg-green-500 text-white  font-semibold`}>
+            Upload Review
+          </button>
+        </section>
+
       </main>
-    </div> : <div className=" flex justify-center items-center h-full  w-full ">
+    </div > : <div className=" flex justify-center items-center h-full  w-full ">
       <img className=" object-contain h-2/4 w-2/5 "
         src={Loader} alt="loading..." />
     </div>

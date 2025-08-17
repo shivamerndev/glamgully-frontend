@@ -31,7 +31,9 @@ const ProductDetails = () => {
 
     const increment = () => setQuantity((q) => q + 1);
     const decrement = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
+
     useEffect(() => {
+        setQuantity(1);
         window.scrollTo({ top: 0, behavior: "smooth" });
     }, [productId]);
 
@@ -119,10 +121,10 @@ const ProductDetails = () => {
 
     useEffect(() => {
         if (p?.quantity < quantity) {
+            setQuantity(quantity - 1);
             alert('enough quantity reached.')
-            setQuantity(p?.quantity);
         }
-    }, [quantity, p])
+    }, [quantity])
 
 
     return (p && recp ?
@@ -162,7 +164,7 @@ const ProductDetails = () => {
                         <label className="block mb-1 font-medium">Quantity</label>
                         <div className="flex items-center border w-fit rounded overflow-hidden">
                             <button onClick={decrement} className="px-3 py-1 text-xl">−</button>
-                            <span className="px-4 py-1">{quantity}</span>
+                            <span className="px-4 py-1">{p?.quantity <= 0 ? 0 :quantity}</span>
                             <button onClick={increment} className="px-3 py-1 text-xl">+</button>
                         </div>
                     </div>
@@ -175,7 +177,8 @@ const ProductDetails = () => {
                         } else {
                             buyNow(p)
                         }
-                    }} className={`w-full  ${p?.quantity <= 0 ? "bg-gray-400" : "bg-black"} text-white rounded-full text-xl font-semibold py-2 text-center hover:bg-gray-900 transition`}>
+                    }}
+                        className={`w-full  ${p?.quantity <= 0 ? "bg-gray-400" : "bg-black"} text-white rounded-full text-xl font-semibold py-2 text-center hover:bg-gray-900 transition`}>
                         Buy it now
                     </button>}
 

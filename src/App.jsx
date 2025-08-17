@@ -18,6 +18,7 @@ import { ProductDataContext } from './context/ProductContext.jsx'
 import ProductsPage from './Admin/ProductsPage.jsx'
 import CustomersPage from './Admin/CustomersPage.jsx'
 import OrderContext from './context/OrderContext.jsx'
+import OrdersPage from './Admin/OrdersPage.jsx'
 
 const App = () => {
   const location = useLocation()
@@ -41,6 +42,7 @@ const App = () => {
         <Route path='/admin/register' element={<Register />} />
         <Route path='/admin/login' element={<Login />} />
         <Route path="/admin/glamgully" element={<OrderContext><AdminProtected><AdminPanel /></AdminProtected></OrderContext>} />
+        <Route path="/admin/glamgully/orders" element={<OrderContext><AdminProtected><OrdersPage /></AdminProtected></OrderContext>} />
       <Route path="/admin/glamgully/products" element={<AdminProtected><ProductsPage /></AdminProtected>} />
       <Route path="/admin/glamgully/customers" element={<AdminProtected><CustomersPage /></AdminProtected>} />
       <Route path="/" element={<Home />} />

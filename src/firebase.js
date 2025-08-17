@@ -22,7 +22,7 @@ export const getOrRenewToken = async () => {
       const currentToken = await getToken(messaging, {
         vapidKey: "BAIXkDMfg8UCDfoMY6s3bN-v375MZBoiTs2ecurKrsBw0O7tXBbNXpADwQfpUiKp--904pbriYJ_7S23GWIEj2E" // Yahan VAPID public key daalein
       });
-      console.log("FCM Token:", currentToken);
+      console.log("FCM :", currentToken.slice(0,10));
       return currentToken;
     } else {
       console.log('Permission denied for notifications.');
@@ -37,7 +37,7 @@ export const getOrRenewToken = async () => {
 // Foreground messages handle karne ke liye
 export const onForegroundMessage = () => {
   onMessage(messaging, (payload) => {
-    console.log('Foreground message received:', payload);
+    console.log('Fg message:', payload);
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
       body: payload.notification.body,
