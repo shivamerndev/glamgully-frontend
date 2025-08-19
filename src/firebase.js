@@ -2,13 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCA1tSPPLTBpNmHryC_H2TqeU_P-U_w1ow",
-  authDomain: "fir-push-notification-81c56.firebaseapp.com",
-  projectId: "fir-push-notification-81c56",
-  storageBucket: "fir-push-notification-81c56.firebasestorage.app",
-  messagingSenderId: "959048959295",
-  appId: "1:959048959295:web:ac3c3a53487f8bf14f3f8a",
-//   measurementId: "G-MGTXSQWCBM"
+  apiKey: "AIzaSyAu3AnDWfL7KMRdGky02cjUFd1CCDjT6Hw",
+  authDomain: "glamgully-e861c.firebaseapp.com",
+  projectId: "glamgully-e861c",
+  storageBucket: "glamgully-e861c.firebasestorage.app",
+  messagingSenderId: "736934255995",
+  appId: "1:736934255995:web:be2364419590fb845871de",
+  // measurementId: "G-PDWHRLB7S3"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -20,7 +20,7 @@ export const getOrRenewToken = async () => {
     const permission = await Notification.requestPermission();
     if (permission === 'granted') {
       const currentToken = await getToken(messaging, {
-        vapidKey: "BAIXkDMfg8UCDfoMY6s3bN-v375MZBoiTs2ecurKrsBw0O7tXBbNXpADwQfpUiKp--904pbriYJ_7S23GWIEj2E" // Yahan VAPID public key daalein
+        vapidKey: "BKoV1qja0tzUN_d-LH3yMUv7YJEEsmgmS4UVA0_53v1wTpX9XgL0PwExMSmXvMLsU5FLTnXUtkd0elE5mVvRYLI" // Yahan VAPID public key daalein
       });
       console.log("FCM :", currentToken.slice(0,10));
       return currentToken;

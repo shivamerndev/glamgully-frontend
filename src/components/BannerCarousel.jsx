@@ -13,7 +13,7 @@ const BannerCarousel = () => {
             title: " GlamGully - Where Elegance Meets You."
         },
         {
-            img: "https://res.cloudinary.com/dgis42anh/image/upload/v1749317565/logo_ac7mo9.jpg",
+            img: "https://res.cloudinary.com/dgis42anh/image/upload/v1755582685/Screenshot_2025-05-25_205010_zsb3ed.png",
             title: "Jewelry that tells your story - GlamGully"
         },
         {

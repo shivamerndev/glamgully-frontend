@@ -11,7 +11,7 @@ import { CustomerDataContext } from "../context/CustomerContext";
 
 const Home = () => {
   const { getProducts, bestSellingProducts } = useContext(ProductDataContext)
-  const {readReviewsImg} = useContext(CustomerDataContext)
+  const { readReviewsImg } = useContext(CustomerDataContext)
   const [products, setProducts] = useState(null)
   const [best, setBest] = useState(null)
   const [current, setcurrent] = useState(0)
@@ -19,7 +19,7 @@ const Home = () => {
   const bestRef = useRef(null);
   const [arrowVisible, setArrowVisible] = useState(true);
   const [activeIndex, setActiveIndex] = useState(null);
-  const [reviewImg,setreviewImg] = useState(null)
+  const [reviewImg, setreviewImg] = useState(null)
 
   const categories = [...new Set(products?.map(p => p.category.trim()))]
 
@@ -59,9 +59,9 @@ const Home = () => {
   }, [])
 
   useEffect(() => {
-    readReviewsImg().then(res=>setreviewImg(res))
+    readReviewsImg().then(res => setreviewImg(res))
   }, [])
-  
+
 
   return (products ?
     <div className="bg-white min-h-screen w-full text-black">
@@ -139,30 +139,31 @@ const Home = () => {
             })}
 
           </div>
-          <h1 className="text-3xl mt-6 font-semibold text-gray-800">
-            Customer Reviews
-          </h1>
 
-          <div className="flex gap-4  items-center overflow-x-auto  h-[60vw] relative">
-            {reviewImg && reviewImg?.map((r, i) => (
-              <div
-                onClick={() => setActiveIndex(i)}
-                key={i}
-                className={`
+          {reviewImg.length > 0 && <>
+            <h1 className="text-3xl mt-6 font-semibold text-gray-800">
+              Customer Reviews
+            </h1>
+            <div className="flex gap-4  items-center overflow-x-auto  h-[60vw] relative">
+              {reviewImg && reviewImg?.map((r, i) => (
+                <div
+                  onClick={() => setActiveIndex(i)}
+                  key={i}
+                  className={`
             w-[30vw] h-[40vw] rounded-xl shadow-md flex-shrink-0 cursor-pointer 
             transition-all duration-100 ease-in-out
             ${activeIndex === i
-                    ? "-translate-y-6 scale-120 shadow-xl"   // active state
-                    : "translate-y-0 scale-100"}`}>
-                <img
-                  src={r.reviewpicture}
-                  alt="Customer"
-                  className="w-full h-full object-cover rounded-xl"
-                />
-              </div>
-            ))}
-          </div>
-
+                      ? "-translate-y-6 scale-120 shadow-xl"   // active state
+                      : "translate-y-0 scale-100"}`}>
+                  <img
+                    src={r.reviewpicture}
+                    alt="Customer"
+                    className="w-full h-full object-cover rounded-xl"
+                  />
+                </div>
+              ))}
+            </div>
+            </>}
         </div>
 
       </main>
@@ -170,7 +171,7 @@ const Home = () => {
     : <div className=" h-full w-full overflow-hidden  ">
       <div className="h-10/13 w-full">
         {<img className={`h-full w-full object-contain transition-transform duration-1000 ease-in-out ${scaled ? 'scale-150' : 'scale-100'}`}
-          src="https://res.cloudinary.com/dgis42anh/image/upload/v1749317565/logo_ac7mo9.jpg" alt="" />}
+          src="https://res.cloudinary.com/dgis42anh/image/upload/v1755582685/Screenshot_2025-05-25_205010_zsb3ed.png" alt="" />}
       </div>
       <div className="h-40 w-full flex justify-center items-center absolute overflow-hidden bottom-4">
         <img className="h-full" src="/homeWaiting.webp" alt="loading..." />

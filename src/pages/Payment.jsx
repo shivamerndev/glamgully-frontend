@@ -35,7 +35,7 @@ const handlePaymentVerify = (data, address, createCustomer, editQuantity, produc
                     address: address,
                     products: product
                 });
-                createCustomer({ fullname: address.fname + address.lname, phone: address.phone.slice(-10) })
+                createCustomer({ fullname: address.fname + " "  + address.lname, phone: address.phone.slice(-10) })
                 editQuantity();
                 CreateOrderFunction(product);
             } catch (error) {
@@ -43,7 +43,7 @@ const handlePaymentVerify = (data, address, createCustomer, editQuantity, produc
             }
         },
         prefill: {
-            email: address.fname + address.lname, // Optional
+            email: address.fname + " " + address.lname, // Optional
             contact: address.phone, // Optional
         },
         notes: {
