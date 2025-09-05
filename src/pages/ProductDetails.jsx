@@ -1,15 +1,20 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import Card from "../components/Card";
-import { FaShieldAlt, FaSmile, FaCoins, FaUndo, FaExchangeAlt, FaRupeeSign } from "react-icons/fa";
-import { FaStar } from "react-icons/fa";
+import { useContext, useEffect, useRef, useState } from "react";
+import { Star } from "lucide-react";
+import { FaMoneyBillWave, FaStar } from "react-icons/fa";
 import { ProductDataContext } from "../context/ProductContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { addCartWithQuantity } from "../utils/local.cart";
 import Loader from '../../src/assets/loader.gif';
-import CartLoader from "/src/assets/cart.gif"
 import axios from "axios";
 import RateBox from "../components/Ratebox";
-
+import BackTitle from "../components/BackTitle";
+import { Heart } from "lucide-react";
+import AnimatedCartButton from '../components/AnimatedCartButton'
+import FlashSale from '../components/FlashSale'
+import { toast, ToastContainer } from 'react-toastify'
+import ImojiDetails from "../components/DetailsImogi.jsx";
+import ProgressLoader from "../utils/ProgressLoader.jsx";
+import ZoomedImage from "../components/ZoomedImage.jsx";
 
 const ProductDetails = () => {
     const navigate = useNavigate()
@@ -17,29 +22,40 @@ const ProductDetails = () => {
     const { singleProduct, setlengthc, getProducts } = useContext(ProductDataContext)
     const [p, setp] = useState(null)
     const [rateBox, setrateBox] = useState(false)
-    const [resComment, setResComment] = useState(null)
     const [recp, setRecp] = useState(null)
     const [comment, setComment] = useState("")
-    const [cartLoad, setCartLoad] = useState(false)
-    const [cartbtn, setCartBtn] = useState(false)
     const [quantity, setQuantity] = useState(1);
     const [Starquantity, setStarquantity] = useState(0);
     const [current, setCurrent] = useState(0);
     const touchStartX = useRef(null);
     const touchEndX = useRef(null);
+    const [ratting, setRatting] = useState(null)
+    const [wishlist, setWishlist] = useState(false)
 
-
-    const increment = () => setQuantity((q) => q + 1);
+    // Also update the increment function to prevent going over stock
+    const increment = () => {
+        if (!p || quantity >= p.quantity) {
+            toast.error(` Only ${p ? p.quantity : 0} items available in stock `);
+            return;
+        }
+        setQuantity(q => q + 1);
+    };
     const decrement = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
+    const [popupImg, setPopupImg] = useState(true)
 
     useEffect(() => {
         setQuantity(1);
+        setCurrent(0);
         window.scrollTo({ top: 0, behavior: "smooth" });
-    }, [productId]);
+    }, [p]);
 
     useEffect(() => {
-        singleProduct(productId).then(data => setp(data))
-        getComment()
+        singleProduct(productId).then(data => {
+            if (data) {
+                setp(data)
+                setRatting(p?.ratings)
+            }
+        }).catch(err => console.log(err))
     }, [productId, rateBox]);
 
     useEffect(() => {
@@ -53,18 +69,10 @@ const ProductDetails = () => {
         }).catch(err => console.log(err))
     }, [p])
 
-    const addCart = () => {
+    const addPqCart = () => {
         addCartWithQuantity(p, quantity)
-        setCartLoad(true)
-        setTimeout(() => {
-            setCartLoad(false)
-            setCartBtn(true)
-        }, 2000);
         const cart = JSON.parse(localStorage.getItem("cart"))
         setlengthc(cart?.length)
-        setTimeout(() => {
-            setCartBtn(false)
-        }, 4000);
     }
 
     const buyNow = (p) => {
@@ -84,15 +92,6 @@ const ProductDetails = () => {
             })
             setComment("")
             setStarquantity(0)
-        } catch (error) {
-            console.error("Error adding comment:", error);
-        }
-    }
-
-    const getComment = async () => {
-        try {
-            const comment = await axios.get(`${import.meta.env.VITE_BASE_URL}/review/all/comments/?productId=${productId}`)
-            setResComment(comment.data)
         } catch (error) {
             console.error("Error adding comment:", error);
         }
@@ -120,144 +119,207 @@ const ProductDetails = () => {
     };
 
     useEffect(() => {
-        if (p?.quantity < quantity) {
-            setQuantity(quantity - 1);
-            alert('enough quantity reached.')
+        if (!p) return; // Guard clause if product isn't loaded yet
+
+        if (p.quantity <= 0) {
+            setQuantity(0); // Set quantity to 0 for out of stock items
+            return;
         }
-    }, [quantity])
+        if (quantity > p.quantity) {
+            setQuantity(p.quantity); // Set quantity to max available
+            toast.warn(`Only ${p.quantity} items available in stock`);
+        }
+    }, [quantity, p]);
+
+    const renderStars = (rating) => {
+        return (
+            <div className="flex items-center space-x-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                        key={star}
+                        className={`w-4 h-4 ${star <= rating
+                            ? "text-amber-500 fill-amber-500"
+                            : "text-amber-200"
+                            }`}
+                    />
+                ))}
+            </div>
+        );
+    };
+
+    const [isZoomed, setIsZoomed] = useState(false);
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const containerRef = useRef(null);
+    const [showFullDescription, setShowFullDescription] = useState(false);
 
 
-    return (p && recp ?
-        <div className="h-screen text-black w-full  px-3 pb-8">
+    const handleMouseMove = (e) => {
+        const { left, top, width, height } =
+            containerRef.current.getBoundingClientRect();
+        const x = ((e.pageX - left) / width) * 100;
+        const y = ((e.pageY - top) / height) * 100;
+        setPosition({ x, y });
+    };
 
+    return (p ?
+        <div className="min-h-screen text-black w-full mb-8 ">
+            <ToastContainer />
+            {isZoomed && <ZoomedImage position={position} img={isZoomed} />}
+
+            <ToastContainer />
             {rateBox && <RateBox create={CommentCreate} Starquantity={Starquantity} setStarquantity={setStarquantity} setrateBox={setrateBox} />}
+            <BackTitle page="Product Details" setWishlist={setWishlist} wishlist={wishlist} icon={<Heart className={`w-4 h-4 transition-colors duration-300 ${wishlist ? "fill-amber-900 text-amber-900" : "text-gray-600 hover:text-red-500"}`} />} />
 
-            <>
-                <div
+
+            <section className="w-full sm:w-10/12 md:w-full mx-auto px-2  lg:px-6 mt-4 md:flex md:justify-between lg:gap-8 ">
+                {/* LEFT: Product Image Carousel */}
+                <div ref={containerRef} onMouseMove={handleMouseMove} onMouseEnter={(e) => setPopupImg(true)} onMouseLeave={(e) => setPopupImg(false)} className="relative w-full md:w-1/2 h-[60vmin] md:h-[70vmin] rounded-2xl overflow-hidden shadow-md"
                     onTouchStart={handleTouchStart}
-                    onTouchEnd={handleTouchEnd}
-                    className="bg-red-200 relative w-full flex h-[45%] mt-4 rounded-md overflow-hidden">
-                    <div
-                        className="flex w-full h-full transition-transform duration-700 ease-in-out"
-                        style={{ transform: `translateX(-${current * 100}%)` }}>
+                    onTouchEnd={handleTouchEnd}>
+
+                    {popupImg && (<span className="bg-white/30 hidden md:block w-1/5 h-1/5 rounded-md absolute z-10 pointer-events-none "
+                        style={{ left: position.x * 5, top: position.y * 3.5 }}></span>
+                    )}
+
+                    <div style={{ transform: `translateX(-${current * 100}%)` }} className="flex w-full cursor-none h-full transition-transform duration-700 ease-in-out">
                         {p?.productimage.map((img, idx) => (
-                            <div key={img} className="w-full shrink-0 h-full rounded-md overflow-hidden">
-                                <img className="h-full w-full object-cover object-top" src={img} alt="pimg" />
+                            <div onMouseEnter={() => setIsZoomed(img)}
+                                onMouseLeave={() => setIsZoomed(false)} key={img} className="w-full shrink-0 h-full">
+                                <img className="h-full w-full object-cover object-center"
+                                    src={img} alt={`product-${idx}`} />
                             </div>
                         ))}
                     </div>
-                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/60 text-white px-3 py-1 rounded-full text-sm font-semibold">
+
+                    <div className={`${popupImg ? "bottom-10" : "bottom-0 opacity-0"} transition-all ease-in-out duration-300 absolute  left-1/2 -translate-x-1/2 h-1/6 bg-amber-50/10 rounded-md hidden  sm:flex overflow-hidden shadow-2xl backdrop-blur-2xl`}>
+                        {p?.productimage && p.productimage.map((img, idx) => (
+                            <button key={idx} onClick={() => setCurrent(idx)} className={`w-20 h-full cursor-pointer shrink-0 rounded-sm ${current === idx ? "border-amber-100  border-2 " : ""}`}>
+                                <img className="h-full w-full object-cover   object-center " src={img} alt={idx} />
+                            </button>
+                        ))}
+                    </div>
+
+                    <span onClick={handleSwipe} className="absolute bottom-3 left-1/2 -translate-x-1/2 w-fit pointer-events-none bg-amber-950/50 /60 text-amber-100 px-3 py-0.5 rounded-full text-sm font-semibold">
                         {current + 1} / {p.productimage.length}
-                    </div>
+                    </span>
                 </div>
-                <div style={{ color: p?.quantity <= 0 && "gray" }} className="w-full mt-2 rounded-lg space-y-3 text-gray-800 font-sans">
-                    <p className=" uppercase tracking-widest text-gray-400">GLAMGULLY</p>
-                    <h1 className="text-3xl mb-0 font-medium">{p?.title}   </h1>
-                    {p?.quantity <= 0 && <span className="text-red-600 text-base font-bold ">out of stock</span>}
-                    <div className="flex items-center space-x-4">
-                        <del className="text-gray-400">₹ 499.00</del>
-                        <span className="text-lg font-semibold">₹ {p?.price}.00</span>
-                        <span className=" bg-pink-100 text-pink-600 px-2 py-1 rounded-full">Sale</span>
+
+                {/* RIGHT: Product Info */}
+                <div style={{ color: p?.quantity <= 0 ? "lightgray" : "" }} className="w-full md:w-1/2 mt-4 md:mt-0 text-amber-950 px-2 lg:px-8 ">
+                    <p className="uppercase text-xs font-bold tracking-wider mb-4 text-amber-900 bg-amber-50 rounded-full inline-block">GLAMGULLY</p>
+                    <h1 className="text-xl font-bold capitalize mb-2">{p?.title}</h1>
+
+                    {/* Rating Section - NEW */}
+                    <div className="flex items-center space-x-3 mb-2">
+                        {renderStars(ratting)}
+                        <span className="text-amber-700 text-sm font-medium">
+                            {ratting} ({p?.reviewsCount} reviews)
+                        </span>
                     </div>
-                    <p className=" text-gray-500"> {p?.description} </p>
+
+                    {p?.quantity <= 0 && (
+                        <span className="text-red-600 text-base font-bold bg-red-50 px-3 rounded-lg">Out of stock</span>
+                    )}
+
+                    {/* Price Section */}
+                    <div className="flex items-center gap-3 bg-amber-50 py-2 px-4 rounded-xl mt-2 mb-1">
+                        <del className="text-amber-700 text-base">₹ 499.00</del>
+                        <span className="text-2xl font-bold text-amber-950">₹ {p?.price}.00</span>
+                        <span className="bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-sm font-medium">
+                            {(Number(p.discount) || 0) + 50}% OFF
+                        </span>
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-amber-800 text-base bg-amber-25 px-2 py-1 my-2 rounded-lg border border-amber-100 xs:leading-4 md:leading-normal">
+                        {showFullDescription ? p?.description : (p?.description?.length < 140 ? p?.description : p?.description?.slice(0, 140))}
+                        {p?.description?.length > 140 && (
+                            <span onClick={() => setShowFullDescription(!showFullDescription)} className="text-blue-500 text-sm cursor-pointer whitespace-nowrap leading-0 ml-1 hover:text-blue-700">
+                                {showFullDescription ? 'show less' : 'see more..'}
+                            </span>)}
+                    </p>
+
+
+                    {/* Quantity Selector */}
                     <div>
-                        <label className="block mb-1 font-medium">Quantity</label>
-                        <div className="flex items-center border w-fit rounded overflow-hidden">
-                            <button onClick={decrement} className="px-3 py-1 text-xl">−</button>
-                            <span className="px-4 py-1">{p?.quantity <= 0 ? 0 :quantity}</span>
-                            <button onClick={increment} className="px-3 py-1 text-xl">+</button>
+                        <label className="block mb-1 font-medium text-amber-900">Quantity</label>
+                        <div className="flex items-center border-2 border-amber-300 rounded-lg overflow-hidden w-fit bg-white">
+                            <button
+                                onClick={decrement}
+                                className="px-4 py-1 text-lg font-bold hover:bg-amber-100 text-amber-700 transition-colors"
+                            >
+                                −
+                            </button>
+                            <span className="px-5 py-1 text-lg bg-amber-50 text-amber-950">
+                                {p?.quantity <= 0 ? 0 : quantity}
+                            </span>
+                            <button
+                                onClick={increment}
+                                className="px-4 py-1 text-lg font-bold hover:bg-amber-100 text-amber-700 transition-colors">
+                                +
+                            </button>
                         </div>
                     </div>
-                    <button onClick={addCart} className="w-full flex justify-center items-center border capitalize  text-xl border-black rounded-full py-2 text-center hover:bg-black hover:text-white transition">
-                        {cartLoad ? <img className='w-fit h-6' src={CartLoader} alt="loading..." /> : (cartbtn ? "added successfully ✅" : "add to cart")}
-                    </button>
-                    {<button onClick={() => {
-                        if (p?.quantity <= 0) {
-                            alert("Product is out of stock")
-                        } else {
-                            buyNow(p)
-                        }
-                    }}
-                        className={`w-full  ${p?.quantity <= 0 ? "bg-gray-400" : "bg-black"} text-white rounded-full text-xl font-semibold py-2 text-center hover:bg-gray-900 transition`}>
-                        Buy it now
-                    </button>}
 
-                    <p className=" text-gray-600 pt-2"></p>
-                </div>
-            </>
-            <div className="bg-cyan-50 text-gray-800 font-[plain] ">
-                <div className="grid grid-cols-3 text-center text-base py-4 px-3 ">
-                    <div className="space-y-2">
-                        <div className="flex justify-center text-2xl">
-                            <FaShieldAlt />
-                        </div>
-                        <p className=" font-medium">Anti Tarnish</p>
-                    </div>
-                    <div className="space-y-2">
-                        <div className="flex justify-center text-2xl">
-                            <FaSmile />
-                        </div>
-                        <p className=" font-medium">Skin Friendly</p>
-                    </div>
-                    <div className="space-y-2">
-                        <div className="flex justify-center text-2xl">
-                            <FaCoins />
-                        </div>
-                        <p className=" font-medium">18k Gold Tone Plated</p>
-                    </div>
-                </div>
-                {/* <div className="grid grid-cols-3 text-center items-center borde border-gray-500 font-normal text-base py-4 px-4 ">
-                    <div className="space-y-1 ">
-                        <div className="flex justify-center text-2xl">
-                            <FaUndo />
-                        </div>
-                        <p className="">1 Days Return</p>
-                    </div>
-                    <div className="space-y-1">
-                        <div className="flex justify-center text-2xl">
-                            <FaExchangeAlt />
-                        </div>
-                        <p className="">1 Days Exchange</p>
-                    </div>
-                    {p.price > 499 && <div className="space-y-1">
-                        <div className="flex justify-center text-2xl">
-                            <FaRupeeSign />
-                        </div>
-                        <p className="">Cash On Delivery</p>
-                    </div>}
-                </div> */}
-            </div>
+                    <div className="flex items-center justify-between gap-4 mt-4">
+                        <AnimatedCartButton pd={addPqCart} product={p} />
 
-            <div className="text-black w-full">
-                <h1 className="text-2xl my-4">You may also like</h1>
-                <div className="flex flex-wrap justify-center bg-amber-40 gap-2 w-full  ">
-                    {recp?.map((p, i) => <Card key={i} product={p} />)}
+                        {/* Buy Button */}
+                        <button onClick={() => {
+                            if (p?.quantity <= 0) {
+                                toast.error("Product is out of stock");
+                            } else {
+                                buyNow(p);
+                            }
+                        }}
+                            className={`w-full block ${p?.quantity <= 0
+                                ? "bg-rose-200 cursor-not-allowed"
+                                : "bg-gradient-to-bl from-amber-700 to-zinc-700  hover:bg-green-700 shadow-lg hover:shadow-xl"
+                                } text-white rounded-full text-base flex justify-center items-center gap-4 cursor-pointer mb-2 hover:scale-105 font-semibold py-2 text-center transition-all duration-300`}>
+                            <FaMoneyBillWave />Buy it now
+                        </button>
+                    </div>
+                    <ImojiDetails />
                 </div>
 
-                <h1 className="text-2xl font-semibold my-4">Reviews</h1>
-                {resComment && resComment.map((c, i) => <div key={i} className="max-w-sm my-4 bg-gray-100 px-4 py-3 rounded-lg shadow flex justify-between items-start">
-                    <div className=" space-y-2">
-                        <div className="flex space-x-1 ">
-                            {[...Array(c.star)].map((_, i) => (
-                                <FaStar onClick={() => {
-                                    console.log(i + 1, 'sense good.');
-                                }} key={i} size={14} className="text-yellow-500" />
-                            ))}
-                        </div>
-                        <p className="text-base text-gray-800">{c.text}</p>
-                    </div>
-                </div>)}
+            </section>
 
-                <div className="relative">
-                    <textarea value={comment} onChange={(e) => setComment(e.target.value)} type="text" placeholder="Write something about this product. " className="mb-4 w-full h-12 px-4 pr-10 py-2 border border-t-0 border-r-0 border-gray-300 outline-none rounded-lg transition"
-                    ></textarea>
-                    {comment.length !== 0 && <p onClick={() => setrateBox(true)} className="bg-blue-400 px-2 text-white rounded-full font-semibold select-none absolute right-2 top-3 text-center ">send</p>}
+            <section className="text-amber-950  w-full">
+                {recp && <div>
+                    <h1 className="text-xl px-4 font-semibold mt-4">You may also like</h1>
+                    <FlashSale allProduct={recp} page={'recommend'} />
+                </div>}
+
+                <h1 className="text-lg px-4 font-semibold my-4">Reviews :  {String(p?.reviewsCount).padStart(2, '0')}</h1>
+                <div className="relative w-10/11  mx-4 md:mx-8">
+                    <textarea autoFocus value={comment} onChange={(e) => setComment(e.target.value)} type="text" placeholder="Write your opinion. "
+                        className=" w-full h-12 px-4 pr-10 py-2 border-2 border-t-0 border-r-0 border-amber-950 text-amber-900 font-semibold outline-none rounded-lg transition"></textarea>
+                    {comment.length !== 0 && <p onClick={() => setrateBox(true)} className="bg-amber-800 cursor-pointer px-2 text-white rounded-full font-semibold select-none absolute right-2 top-3 text-center ">send</p>}
                 </div>
-            </div>
-        </div> : <div className=" flex justify-center items-center h-10/12 w-full ">
-            <img className=" object-contain h-2/4 w-2/5 "
-                src={Loader} alt="product loading..." />
-        </div>
+                {p.reviews && p.reviews.map((c, i) =>
+                    <div key={i} className="w-10/11 mx-auto my-4 bg-gradient-to-br from-orange-50 to-amber-50 px-4 py-3 rounded-lg shadow flex md:mx-8 justify-start items-start">
+                        <div className=" space-y-2">
+                            <div className="flex space-x-1 ">
+                                {[...Array(c.star)].map((_, i) => (
+                                    <FaStar onClick={() => {
+                                        console.log(i + 1, 'sense good.');
+                                    }} key={i} size={14} className="text-yellow-500" />
+                                ))}
+                            </div>
+                            <p className="text-base text-amber-950 font-semibold">{c.text}</p>
+                        </div>
+                    </div>)}
+
+
+            </section>
+
+            {/* <footer className="fixed bottom-0 left-0 z-10 bg-amber-50 rounded-xl py-1 w-full items-center flex justify-between font-semibold text-base">
+                <h1 className="px-4 w-1/3">Total Price ₹299.00</h1>
+                <div className="w-1/2 pt-1.5" >
+                    <AnimatedCartButton pd={addPqCart} product={p} />
+                </div>
+            </footer> */}
+        </div> : <ProgressLoader response={p} />
     );
 }
 export default ProductDetails;

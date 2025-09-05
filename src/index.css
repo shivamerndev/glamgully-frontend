@@ -1,4 +1,8 @@
 @import "tailwindcss";
+@import "@flaticon/flaticon-uicons/css/all/all.css";
+/* ya specific style */
+@import "@flaticon/flaticon-uicons/css/bold/rounded.css";
+@import "@flaticon/flaticon-uicons/css/solid/rounded.css";
 @theme {
   --breakpoint-xs: 20rem;
 }
@@ -16,30 +20,15 @@
   background: linear-gradient(90deg, #fcff9e 0%, #f59b14 100%);
   border-radius: 20%;
 }
+#categoryscroll::-webkit-scrollbar {
+  display: none;
+}
 
 .marquee-track {
   display: flex;
-  animation: marquee 5s linear infinite;
-  background: linear-gradient(
-    300deg,
-    rgb(164, 18, 189) 0%,
-    rgb(223, 115, 43) 48%,
-    rgb(187, 113, 8) 100%
-  );
+  animation: marquee 15s linear infinite;
+  background-color: rgb(233, 186, 159);
   transition: all ease-in-out;
-}
-
-#offer {
-  background: #833ab4;
-  background: linear-gradient(
-    87deg,
-    rgba(131, 58, 180, 1) 0%,
-    rgba(189, 19, 19, 1) 48%,
-    rgba(212, 137, 32, 1) 100%
-  );
-}
-#offertext {
-  animation: marqueetext 1.5s ease-in-out infinite alternate-reverse;
 }
 
 @keyframes marquee {

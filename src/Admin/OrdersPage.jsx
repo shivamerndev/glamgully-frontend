@@ -14,7 +14,7 @@ const OrdersPage = () => {
         })
     }, [])
 
-    return (
+    return ( orders &&
         <div>
             <div className="flex flex-col  min-h-screen bg-gray-100">
                 <h1 className="text-2xl fixed bg-gradient-to-tl from-green-400 from-30% to-rose-300 rounded font-bold uppercase w-full text-center py-2 text-yellow-100">

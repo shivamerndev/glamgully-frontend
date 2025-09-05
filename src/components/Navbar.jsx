@@ -1,84 +1,69 @@
-import { useContext, useEffect, useRef, useState } from 'react'
-import Menubar from './Menubar';
+import { useState, useContext } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ProductDataContext } from '../context/ProductContext';
 import { IoIosSearch } from "react-icons/io";
 import { LuShoppingCart } from "react-icons/lu";
-import { RiMenu2Fill } from "react-icons/ri";
-import { Link } from 'react-router-dom';
-import { ProductDataContext } from '../context/ProductContext';
-import { RxCross1 } from "react-icons/rx";
+import SearchInput from "../components/SearchInput";
+import LocationChooser from "../utils/LocationChooser";
+import { HiOutlineOfficeBuilding } from "react-icons/hi";
+import { VscAccount } from "react-icons/vsc";
+import { IoHomeOutline } from "react-icons/io5";
+import { IoBagHandleOutline } from "react-icons/io5";
+import { MdWhatsapp } from 'react-icons/md';
+
 
 const Navbar = () => {
-    const [menu, setmenu] = useState(false);
+    const { pathname } = useLocation()
     const [search, setsearch] = useState(false);
-    const searchRef = useRef(null);
-    const [stext, setStext] = useState("")
-    const [suggest, setSuggest] = useState(null)
-    const { searchProduct, lengthc } = useContext(ProductDataContext)
+    const navigate = useNavigate()
+    const { lengthc } = useContext(ProductDataContext)
 
-    useEffect(() => {
-        const delay = setTimeout(() => {
-            if (stext !== "") {
-                searchProduct(stext)
-                    .then(res => setSuggest(res))
-                    .catch(err => console.log(err));
-            } else {
-                setSuggest(null);
-            }
-        }, 500); // 500ms delay
-
-        return () => clearTimeout(delay); // cleanup old timeout
-    }, [stext]);
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (searchRef.current && !searchRef.current.contains(event.target)) {
-                setsearch(false);
-            }
-        };
-        if (search) {
-            document.addEventListener("mousedown", handleClickOutside);
+    const handleLinks = (t) => {
+        if (t === "search") {
+            setsearch(true)
         }
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [search]);
-
-
+        else if (t === "home") {
+            navigate(`/`)
+        } else {
+            navigate(`/${t}`)
+        }
+    }
 
     return (
-        <>
-            {menu && <Menubar setmenu={setmenu} />}
-            <nav className="w-full z-10 fixed bg-white top-0 flex  items-center justify-between py-3 px-4 text-2xl ">
-                {!menu && <RiMenu2Fill onClick={() => setmenu(true)} />}
-                {menu && <RxCross1 onClick={() => setmenu(false)} />}
-                {search && <div ref={searchRef} className='  absolute font-semibold left-[15%] h-full content-center z-50'>
-                    <input id='search' value={stext} onChange={(e) => setStext(e.target.value)} autoFocus type="txt" placeholder='Search'
-                        className='outline-none text-xl font-normal bg-white border w-[70vw] border-zinc-900 rounded-md px-3 py-1 mt-1' />
-                    <span onClick={() => {
-                        if (stext.trim() !== "") {
-                            setStext("")
-                        } else {
-                            setsearch(false)
-                        }
-                    }} className='absolute right-3 top-1/2 mt-1 -translate-y-1/2 '>&times;</span>
-                    <div className='bg-white max-h-[40vh] overflow-auto rounded text-lg absolute left-1/2 -translate-x-1/2 w-full '>
-                        {suggest && suggest.map((t, i) => <Link to={`/product/${t._id}`} onClick={() => {
-                            setsearch(false)
-                        }} key={i} className='border-b-[1px] pl-3 py-1  block text-gray-700 border-gray-300'>{t?.title}</Link >)}
-                    </div>
+        <div className="md:flex sticky md:h-16 items-center md:top-0 xs:-top-16 z-10 backdrop-blur-xl md:backdrop-blur-2xl bg-white/10 select-none justify-between w-full px-4">
+            {/* Mobile only (hidden on md+) */}
+            {pathname === "/" && (
+                <div className="block md:hidden w-full">
+                    <LocationChooser />
+                    <SearchInput />
+                </div>
+            )}
+            {/* Desktop & Tablet (md+) always visible */}
+            <div className="hidden md:w-1/3  md:flex justify-start items-center">
+                <LocationChooser />
+                {!search && <div onClick={() => handleLinks("search")} className="flex mt-2  flex-col relative items-center cursor-pointer ">
+                    <IoIosSearch size={20} />
+                    <h1 className='hidden md:block text-sm leading-3'>search</h1>
                 </div>}
-                <a href="/">
+
+            </div>
+            <div className="hidden md:flex justify-center w-1/3">
+                {search ? <div className="w-full ">
+                    <SearchInput search={search} setsearch={setsearch} />
+                </div> : <a href="/">
                     <img className=" mt-4 h-10 ml-6  " src="/glam_text-removebg-preview.png" alt="logo" />
                 </a>
-                <div className="flex gap-4 ">
-                    {!search && <IoIosSearch onClick={() => setsearch(!search)} />}
-                    <Link to={('/cart')} className='relative'>
-                        <LuShoppingCart />
-                        {lengthc > 0 && <h1 className='bg-black text-white -top-2 -right-3 text-xs px-1.5  rounded-full absolute'>{lengthc}</h1>}
-                    </Link>
-                </div>
-            </nav>
-        </>
+                }
+            </div>
+            <div className=" hidden md:flex justify-between pl-4 items-center text-xs  w-1/3 ">
+                {[{ t: "home", icon: <IoHomeOutline size={20} /> }, { t: "about", icon: <HiOutlineOfficeBuilding size={20} /> }, { t: "contact", icon: <MdWhatsapp size={20} /> }, { t: "orders", icon: <IoBagHandleOutline size={20} /> }, { t: "cart", icon: <LuShoppingCart size={20} /> }, { t: "account", icon: <VscAccount size={20} /> },
+                ].map(e => <div onClick={() => handleLinks(e.t)} key={e.t} className="flex flex-col relative items-center cursor-pointer ">
+                    {e.icon}
+                    {e.t === "cart" && <h1 className='bg-black text-white -top-1.5 -right-2 text-xs px-1 rounded-full absolute'>{lengthc}</h1>}
+                    <h1 className='md:hidden lg:block'>{e.t}</h1>
+                </div>)}
+            </div>
+        </div>
     )
 }
 

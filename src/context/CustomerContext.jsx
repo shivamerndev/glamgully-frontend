@@ -34,7 +34,7 @@ const CustomerContext = ({ children }) => {
                 },
             }
             );
-            return ( res.data);
+            return (res.data);
         } catch (error) {
             console.log(error);
         }
@@ -42,7 +42,7 @@ const CustomerContext = ({ children }) => {
     const readReviewsImg = async () => {
         try {
             const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/img/review/read`);
-            return ( res.data);
+            return (res.data);
         } catch (error) {
             console.log(error.message);
 

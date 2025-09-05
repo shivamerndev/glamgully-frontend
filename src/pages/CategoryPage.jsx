@@ -1,5 +1,5 @@
 import { CiFilter } from "react-icons/ci";
-import Card from "../components/Card";
+import Card from "../components/NewCard";
 import { useContext, useEffect, useState } from "react";
 import FilterSidebar from "../components/FilterSidebar";
 import { ProductDataContext } from "../context/ProductContext";
@@ -72,21 +72,6 @@ const CategoryPage = () => {
             {/* Product List */}
             <InfiniteScroll
                 dataLength={products.length}
-                // next={() => {
-                //     if (products.length < 10) {
-                //         setHasMore(false)
-                //         return;
-                //     }
-                //     getProducts(page + 1, limit, sort).then((data) => {
-                //         if (data.products.length > 0) {
-                //             setProducts((prev) => [...prev, ...data.products]);
-                //             setPage((prev) => prev + 1);
-                //         } else {
-                //             setHasMore(false);
-                //         }
-                //     })
-                // }}
-
                 next={() => {
                     if (products.length < 10) {
                         setHasMore(false)

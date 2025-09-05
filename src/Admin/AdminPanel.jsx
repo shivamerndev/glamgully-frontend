@@ -98,7 +98,7 @@ const AdminPanel = () => {
     if (categoryp) {
       const archiveObj = {};
       categoryp.forEach(c => {
-        archiveObj[c] = true;
+        archiveObj[c.name] = true;
       });
       setArchive(archiveObj);
     }

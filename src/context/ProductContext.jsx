@@ -12,13 +12,13 @@ const ProductContext = ({ children }) => {
         try {
             const response = await axios.post(`${import.meta.env.VITE_PRODUCT_BASE}/create`, formData, {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
                     "Content-Type": "multipart/form-data"
-                }
+                },
+                withCredentials: true
             })
             return response.data
         } catch (error) {
-            console.log(error?.response?.data)
+            console.log(error)
         }
     }
     const getProducts = async (page, limit, sort) => {
@@ -93,7 +93,7 @@ const ProductContext = ({ children }) => {
     }
     const archiveCategory = async (category) => {
         try {
-            const response = await axiosProductInstance.post(`/archive/category`, {category})
+            const response = await axiosProductInstance.post(`/archive/category`, { category })
             return (response.data);
         } catch (error) {
             console.log(error.message);
@@ -108,7 +108,7 @@ const ProductContext = ({ children }) => {
             console.log(error.message);
         }
     }
-     const categoryPublic = async () => {
+    const categoryPublic = async () => {
         try {
             const response = await axiosProductInstance.get(`/find/category/public`)
             return (response.data);
@@ -116,11 +116,37 @@ const ProductContext = ({ children }) => {
             console.error(error)
         }
     }
+    const TrendingProducts = async () => {
+        try {
+            const products = await axiosProductInstance.get(`/trending/products`)
+            return products.data;
+        } catch (error) {
+            console.log(error.message);
+
+        }
+    }
+    const PopularProducts = async () => {
+        try {
+            const products = await axiosProductInstance.get(`/popular/products`)
+            return products.data;
+        } catch (error) {
+            console.log(error.message);
+
+        }
+    }
+    const ProdcutByCategory = async (category, page, limit, sort) => {
+        try {
+            const products = await axiosProductInstance.get(`/find/products/${category}`)
+            return products.data;
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
     const [lengthc, setlengthc] = useState(0)
 
     return (
         <>
-            <ProductDataContext.Provider value={{ categoryPublic,activeCategory, archiveCategory, categoryProduct, bestSellingProducts, lengthc, setlengthc, searchProduct, createProduct, getProducts, getProductsAdmin, singleProduct, editProduct, deleteProduct }}>
+            <ProductDataContext.Provider value={{ ProdcutByCategory, TrendingProducts, PopularProducts, categoryPublic, activeCategory, archiveCategory, categoryProduct, bestSellingProducts, lengthc, setlengthc, searchProduct, createProduct, getProducts, getProductsAdmin, singleProduct, editProduct, deleteProduct }}>
                 {children}
             </ProductDataContext.Provider>
         </>

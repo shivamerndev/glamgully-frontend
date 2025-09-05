@@ -74,7 +74,7 @@ const Cart = () => {
     };
 
     useEffect(() => {
-        checkStock();
+        if (cartItems) checkStock();
     }, [cartItems]);
 
     return cartItems ? (
