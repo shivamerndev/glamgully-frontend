@@ -24,7 +24,7 @@ const CategoryPanel = () => {
             <section id='categoryscroll' className={`   ${AllCategories ? "max-h-screen" : "xs:h-23 sm:h-28"}   md:h-fit grid grid-cols-3 overflow-x-auto xs:grid-cols-4  sm:grid-cols-6 md:flex items-center shrink-0 md:gap-4 xs:overflow-y-hidden w-full md:overflow-x-auto`}>
                 {categories?.map((c, i) => {
                     return <div key={i} className="  mb-2  text-xl text-center font-semibold ">
-                        <Link to={`/category/${c.name}`} className=" inline-block overflow-hidden h-18 w-18 sm:h-20 sm:w-20   rounded-full md:h-30 md:w-30 ">
+                        <Link to={`/product/all?cate=${c.name}`} className=" inline-block overflow-hidden h-18 w-18 sm:h-20 sm:w-20   rounded-full md:h-30 md:w-30 ">
                             <img className="w-full h-full object-cover object-center" src={c.image} alt="manually adding picture" />
                         </Link>
                         <h1 className="font-[PP backdrop-blur-xs text-shadow-2xs font-normal  md:text-base text-xs sm:text-sm">{c.name}</h1>

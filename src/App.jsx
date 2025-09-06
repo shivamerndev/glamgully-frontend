@@ -61,12 +61,11 @@ const App = () => {
         <Route path='/checkout/cart' element={<OrderContext><CheckoutForm /></OrderContext>} />
         <Route path='/checkout/order/:productId' element={<OrderContext><OrderSummary /></OrderContext>} />
         <Route path='/checkout/order/cart' element={<OrderContext><OrderSummary /></OrderContext>} />
-        <Route path='/category/:productname' element={<AllProductsPage />} />
         <Route path='/product/all' element={<AllProductsPage />} />
         <Route path='/cart' element={<Cart />} />
         <Route path='/orders' element={<MyOrders />} />
       </Routes>
-    </div >
+    </div>
   )
 }
 

@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-import FilterSidebar from "../components/FilterSidebar";
 import { ProductDataContext } from "../context/ProductContext";
 import { useParams } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
