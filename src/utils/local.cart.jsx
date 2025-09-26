@@ -1,5 +1,5 @@
 
-export const addToCart = (product) => {
+export const addToCartLocal = (product) => {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     try {
         if (product) {
@@ -40,7 +40,7 @@ export const getCart = () => {
     return JSON.parse(localStorage.getItem("cart")) || [];
 };
 
-export const removeFromCart = (productId) => {
+export const removeFromCartLocal = (productId) => {
     let cart = JSON.parse(localStorage.getItem("cart"));
     cart = cart.filter(item => item._id !== productId);
     localStorage.setItem("cart", JSON.stringify(cart));

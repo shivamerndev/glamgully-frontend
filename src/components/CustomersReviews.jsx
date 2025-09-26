@@ -6,7 +6,7 @@ const CustomersReviews = () => {
     const [activeIndex, setActiveIndex] = useState(0);
     const scrollContainerRef = useRef(null);
     const [reviewImgres, setreviewImgres] = useState(null)
-  const { readReviewsImg } = useContext(CustomerDataContext)
+    const { readReviewsImg } = useContext(CustomerDataContext)
 
 
     const reviewImg = [
@@ -17,7 +17,6 @@ const CustomersReviews = () => {
             rating: 5,
             review:
                 "Amazing quality! Exactly what I was looking for. The fabric is soft and the fit is perfect.",
-            verified: true,
             date: "2 days ago",
         },
         {
@@ -27,7 +26,6 @@ const CustomersReviews = () => {
             rating: 4,
             review:
                 "Great product with fast delivery. Packaging was excellent and the item matches the description.",
-            verified: true,
             date: "1 week ago",
         },
         {
@@ -37,7 +35,6 @@ const CustomersReviews = () => {
             rating: 4,
             review:
                 "Good value for money. The quality exceeded my expectations. Will definitely buy again.",
-            verified: false,
             date: "1 month ago",
         },
         {
@@ -47,7 +44,6 @@ const CustomersReviews = () => {
             rating: 5,
             review:
                 "Absolutely fantastic! The customer service was also very helpful. Five stars!",
-            verified: true,
             date: "2 months ago",
         },
     ];

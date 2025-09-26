@@ -55,12 +55,12 @@ const AdminPanel = () => {
   }, [showModal]);
 
   useEffect(() => {
-    allCustomers().then(res => {
-      setCustomer(res)
-    }).catch(err => {
-      console.log(err);
-      setCustomer([])
-    })
+    // allCustomers().then(res => {
+    //   setCustomer(res)
+    // }).catch(err => {
+    //   console.log(err);
+    //   setCustomer([])
+    // })
     readOrder().then(res => {
       setTotalorder(res.total)
     }).catch(err => {

@@ -1,20 +1,27 @@
 import { useContext, useState } from 'react';
 import { ShoppingCart, Package } from 'lucide-react';
 import '../../src/AnimatedCartButton.css';
-import { addToCart } from '../utils/local.cart'
+import { addToCartLocal } from '../utils/local.cart'
 import { ProductDataContext } from '../context/ProductContext';
+import { CustomerDataContext } from '../context/CustomerContext';
 
 const AnimatedCartButton = ({ product, pd }) => {
     const [isClicked, setIsClicked] = useState(false);
     const [showAdded, setShowAdded] = useState(false);
     const { setlengthc } = useContext(ProductDataContext)
+    const { addToCart, profile } = useContext(CustomerDataContext)
 
     const addCart = (product) => {
         if (pd) {
             pd()
         }
+        else if (profile) {
+            addToCart(product._id).then(res => setlengthc(res.length)).catch(err => { console.log(err.response.data); })
+        }
         else {
-            addToCart(product)
+            addToCartLocal(product)
+            const cart = JSON.parse(localStorage.getItem("cart"))
+            setlengthc(cart?.length)
         }
         cartClick()
     }
@@ -27,9 +34,7 @@ const AnimatedCartButton = ({ product, pd }) => {
         setTimeout(() => {
             setIsClicked(false);
             setShowAdded(false);
-            const cart = JSON.parse(localStorage.getItem("cart"))
-            setlengthc(cart?.length)
-        }, 3000);
+        }, 2000);
     };
 
     return (

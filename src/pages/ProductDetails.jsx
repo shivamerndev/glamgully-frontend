@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { Star } from "lucide-react";
 import { FaMoneyBillWave, FaStar } from "react-icons/fa";
 import { ProductDataContext } from "../context/ProductContext";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { addCartWithQuantity } from "../utils/local.cart";
 import Loader from '../../src/assets/loader.gif';
 import axios from "axios";
@@ -15,13 +15,16 @@ import { toast, ToastContainer } from 'react-toastify'
 import ImojiDetails from "../components/DetailsImogi.jsx";
 import ProgressLoader from "../utils/ProgressLoader.jsx";
 import ZoomedImage from "../components/ZoomedImage.jsx";
+import { CustomerDataContext } from "../context/CustomerContext.jsx";
 
 const ProductDetails = () => {
     const navigate = useNavigate()
     const { productId } = useParams()
+    const { state } = useLocation()
     const { singleProduct, setlengthc, getProducts } = useContext(ProductDataContext)
+    const { profile, addToCart, addWishlist, removeWishlist } = useContext(CustomerDataContext)
     const [p, setp] = useState(null)
-    const [rateBox, setrateBox] = useState(false)
+    const [rateBox, setrateBox] = useState(false || state)
     const [recp, setRecp] = useState(null)
     const [comment, setComment] = useState("")
     const [quantity, setQuantity] = useState(1);
@@ -32,6 +35,18 @@ const ProductDetails = () => {
     const [ratting, setRatting] = useState(null)
     const [wishlist, setWishlist] = useState(false)
 
+    const toggleWishlist = () => {
+        if (!profile) return navigate('user/login');
+        if (wishlist) {
+            removeWishlist(productId).then(res => {
+                setWishlist(false)
+            })
+        } else {
+            addWishlist(productId).then(res => {
+                setWishlist(true)
+            })
+        }
+    };
     // Also update the increment function to prevent going over stock
     const increment = () => {
         if (!p || quantity >= p.quantity) {
@@ -44,10 +59,17 @@ const ProductDetails = () => {
     const [popupImg, setPopupImg] = useState(true)
 
     useEffect(() => {
+        setWishlist(profile?.wishlist.includes(productId))
+    }, [profile])
+
+    useEffect(() => {
         setQuantity(1);
         setCurrent(0);
         window.scrollTo({ top: 0, behavior: "smooth" });
-    }, [p]);
+        if (state) {
+            setComment("Nice Product.")
+        }
+    }, [p, state]);
 
     useEffect(() => {
         singleProduct(productId).then(data => {
@@ -70,14 +92,18 @@ const ProductDetails = () => {
     }, [p])
 
     const addPqCart = () => {
-        addCartWithQuantity(p, quantity)
-        const cart = JSON.parse(localStorage.getItem("cart"))
-        setlengthc(cart?.length)
+        if (profile) {
+            addToCart(productId, quantity).then(res => setlengthc(res.length)).catch(err => { console.log(err.response.data); })
+        } else {
+            addCartWithQuantity(p, quantity)
+            const cart = JSON.parse(localStorage.getItem("cart"))
+            setlengthc(cart?.length)
+        }
     }
 
     const buyNow = (p) => {
         try {
-            navigate(`/checkout/${p._id}&${quantity}`);
+            navigate(`/checkout/${p._id}?quantity=${quantity}`);
         } catch (error) {
             console.log(error)
         }
@@ -152,7 +178,6 @@ const ProductDetails = () => {
     const containerRef = useRef(null);
     const [showFullDescription, setShowFullDescription] = useState(false);
 
-
     const handleMouseMove = (e) => {
         const { left, top, width, height } =
             containerRef.current.getBoundingClientRect();
@@ -165,10 +190,9 @@ const ProductDetails = () => {
         <div className="min-h-screen text-black w-full mb-8 ">
             <ToastContainer />
             {isZoomed && <ZoomedImage position={position} img={isZoomed} />}
-
             <ToastContainer />
             {rateBox && <RateBox create={CommentCreate} Starquantity={Starquantity} setStarquantity={setStarquantity} setrateBox={setrateBox} />}
-            <BackTitle page="Product Details" setWishlist={setWishlist} wishlist={wishlist} icon={<Heart className={`w-4 h-4 transition-colors duration-300 ${wishlist ? "fill-amber-900 text-amber-900" : "text-gray-600 hover:text-red-500"}`} />} />
+            <BackTitle page="Product Details" toggleWishlist={toggleWishlist} icon={<Heart className={`w-4 h-4 transition-colors duration-300 ${wishlist ? "fill-amber-900 text-amber-900" : "text-gray-600 hover:text-red-500"}`} />} />
 
 
             <section className="w-full sm:w-10/12 md:w-full mx-auto px-2  lg:px-6 mt-4 md:flex md:justify-between lg:gap-8 ">
@@ -231,11 +255,11 @@ const ProductDetails = () => {
                     </div>
 
                     {/* Description */}
-                    <p className="text-amber-800 text-base bg-amber-25 px-2 py-1 my-2 rounded-lg border border-amber-100 xs:leading-4 md:leading-normal">
+                    <p className="text-amber-950 text-sm md:text-base bg-amber-25  my-3 xs:leading-4 md:leading-normal">
                         {showFullDescription ? p?.description : (p?.description?.length < 140 ? p?.description : p?.description?.slice(0, 140))}
                         {p?.description?.length > 140 && (
-                            <span onClick={() => setShowFullDescription(!showFullDescription)} className="text-blue-500 text-sm cursor-pointer whitespace-nowrap leading-0 ml-1 hover:text-blue-700">
-                                {showFullDescription ? 'show less' : 'see more..'}
+                            <span onClick={() => setShowFullDescription(!showFullDescription)} className="text-sky-500 text-sm cursor-pointer whitespace-nowrap leading-0 ml-1">
+                                {showFullDescription ? 'show less' : 'show more...'}
                             </span>)}
                     </p>
 

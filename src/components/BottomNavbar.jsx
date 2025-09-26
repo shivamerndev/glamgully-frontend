@@ -1,12 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "@flaticon/flaticon-uicons/css/all/all.css";
+import { CustomerDataContext } from "../context/CustomerContext";
 
 const BottomNavbar = () => {
     const navigate = useNavigate();
     const { pathname } = useLocation()
     const [active, setActive] = useState("home");
     const [hidden, setHidden] = useState(false);
+    const { profile } = useContext(CustomerDataContext)  // use this now
 
     useEffect(() => {
         let lastScrollY = window.scrollY;

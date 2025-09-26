@@ -10,27 +10,28 @@ const BannerCarousel = () => {
 
     const banners = [
         {
-            type: "custom", // 👈 ye hai new left+right banner
-            title: "New Collection",
-            desc: "Jewelry that tells your story - GlamGully",
+            type: "custom",
+            title: "Discover the New Collection",
+            desc: "GlamGully – Where timeless elegance meets your unique style.",
             btn: "Shop Now",
-            img: "https://plus.unsplash.com/premium_photo-1674498704099-bdd05f6fc274?q=80&w=1376&auto=format&fit=crop&ixlib=rb-4.1.0",// apna image yaha lagao
+            img: "https://imgs.search.brave.com/8FEQE_L3gEocO6ek7JozJXZx0U3VKR6iIvILiW2TMuY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9wbHVz/LnVuc3BsYXNoLmNv/bS9wcmVtaXVtX3Bo/b3RvLTE2NzQyNTU0/NjY4MzYtZjM4ZDFj/YzZmZDBkP2ZtPWpw/ZyZxPTYwJnc9MzAw/MCZpeGxpYj1yYi00/LjEuMCZpeGlkPU0z/d3hNakEzZkRCOE1I/eHpaV0Z5WTJoOE1U/ZDhmSGR2YldGdUpU/SXdhbVYzWld4eWVY/eGxibnd3Zkh3d2ZI/eDhNQT09"
         },
         {
-            type: "custom", // 👈 ye hai new left+right banner
-            title: "New Collection",
-            desc: "GlamGully - Where Elegance Meets You.",
+            type: "custom",
+            title: "Jewelry That Speaks Your Story",
+            desc: "Every piece from GlamGully is designed to reflect beauty, confidence, and you.",
             btn: "Shop Now",
-            img: "https://res.cloudinary.com/dgis42anh/image/upload/v1755582685/Screenshot_2025-05-25_205010_zsb3ed.png",// apna image yaha lagao
+            img: "https://imgs.search.brave.com/M37SUBSq1y0hwhk2qFxiSxcGJg4ApNvQUSFKrpfd4TA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/cHJlbWl1bS1waG90/by9iZWF1dGlmdWwt/d29tYW4td2Vhcmlu/Zy1sdXh1cnktamV3/ZWxsZXJ5LWJsYWNr/LWJhY2tncm91bmRf/ODY0NTk1LTY5MS5q/cGc_c2VtdD1haXNf/aHlicmlkJnc9NzQw"
         },
         {
-            type: "custom", // 👈 ye hai new left+right banner
-            title: "New Collection",
-            desc: "Elegance in every piece of jewelry",
+            type: "custom",
+            title: "Elegance in Every Detail",
+            desc: "From delicate classics to bold statements – GlamGully adds grace to every occasion.",
             btn: "Shop Now",
-            img: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0",// apna image yaha lagao
+            img: "https://imgs.search.brave.com/H0XTjsNQwiouD2Uz63iAP__lWjEyiOEu690U_TuLguU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMudW5zcGxhc2gu/Y29tL3Bob3RvLTE2/OTQwNjIwNDU3NzYt/ZjQ4ZDliNmRlNTdl/P2ZtPWpwZyZxPTYw/Jnc9MzAwMCZpeGxp/Yj1yYi00LjEuMCZp/eGlkPU0zd3hNakEz/ZkRCOE1IeHpaV0Z5/WTJoOE0zeDhkMjl0/WVc0bE1qQnFaWGRs/Ykd4bGNubDhaVzU4/TUh4OE1IeDhmREE9"
         },
     ];
+
 
     // Auto slide every 3s
     useEffect(() => {
@@ -71,11 +72,11 @@ const BannerCarousel = () => {
                 {banners.map((banner, i) => <div key={i}
                     className="w-full shrink-0 h-full md:mt-4 rounded-md md:rounded-2xl  bg-[#f5f0eb] flex items-center justify-between">
                     <div className="flex-1  pl-4 md:pl-16">
-                        <h2 className="sm:text-xl  text-base font-bold md:text-3xl text-gray-800 mb-2">
+                        <h2 className="sm:text-xl  text-sm font-bold md:text-3xl text-gray-800 mb-3 leading-tight">
                             {banner.title}
                         </h2>
-                        <p className="text-gray-600 mb-1 sm:mb-4 sm:text-xl  text-sm">{banner.desc}</p>
-                        <button onClick={() => navigate('/product/all')} className="bg-amber-950 cursor-pointer hover:bg-amber-800  md:mt-8 text-white px-2 sm:text-base text-sm sm:py-1.5 py-0.5 sm:px-4 sm:rounded-lg rounded-md shadow-md transition">
+                        <p className="text-gray-600 mb-1 sm:mb-4 sm:text-base  text-xs md:leading-normal leading-3">{banner.desc}</p>
+                        <button onClick={() => navigate('/product/all')} className="bg-amber-950 cursor-pointer hover:bg-amber-800  md:mt-8 mt-2 text-white px-2 sm:text-base text-sm sm:py-1.5 py-0.5 sm:px-4 sm:rounded-lg rounded-md shadow-md transition">
                             {banner.btn}
                         </button>
                     </div>

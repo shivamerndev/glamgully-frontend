@@ -24,11 +24,10 @@ const CitySelector = ({ setLocation, setOpen }) => {
     };
 
     const handleSelect = (city) => {
+        setLocation(city)
         setSelected(city);
-        localStorage.setItem("location", city);
         setQuery("");
         setResults([]);
-        setLocation(city)
         setOpen(false)
     };
 
@@ -47,35 +46,33 @@ const CitySelector = ({ setLocation, setOpen }) => {
 
 
     return (
-        <div className="w-full my-4 mx-auto relative">
+        <div className="w-full my-3 mx-auto relative">
             {/* Input Box */}
             <input
                 type="text"
                 value={query}
                 onChange={handleChange}
                 placeholder={selected || "Type your city..."}
-                className="w-full mx-auto border  px-3 py-2 rounded-lg shadow-sm" />
+                className="w-full mx-auto border text-base border-amber-700 text-amber-950 focus:outline-none focus:border-2  px-3 py-1 rounded-lg shadow-sm" />
 
             {/* Dropdown results */}
             {results?.length > 0 && (
-                <ul className="absolute mt-1 w-full bg-white border border-amber-950 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                <ul id="categoryscroll" className="absolute mt-2 w-full bg-amber-50 border border-amber-900 rounded-lg shadow-lg max-h-48 overflow-y-auto">
                     {results.map((item, i) => (
                         <li key={i} onClick={() => {
                             handleSelect(item.display_name.split(",")[0] + ", " + (item.address.state || item.address.country))
                         }}
-                            className="px-3 py-2 hover:bg-gray-100 cursor-pointer">
+                            className="px-3 py-1 hover:bg-amber-100 text-amber-900 cursor-pointer">
                             {item.display_name}
                         </li>
                     ))}
                 </ul>
             )}
-
-            {/* Selected City
-      {selected && (
-        <p className="mt-2 text-sm text-green-600">
-          ✅ Selected: <span className="font-medium">{selected}</span>
-        </p>
-      )} */}
+            {selected && (
+                <p className="mt-2 text-sm text-green-600">
+                    ✅ Selected: <span className="font-medium">{selected}</span>
+                </p>
+            )}
         </div>
     );
 };

@@ -52,3 +52,30 @@
   border: 1px solid rgba(14, 14, 14, 0.469);
   outline-color: rgba(0, 110, 255, 0.748);
 }
+@keyframes pianoWave {
+  0% {
+    opacity: 0.3;
+    transform: translateX(-4px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0.3;
+    transform: translateX(4px);
+  }
+}
+.animate-piano {
+  display: inline-flex;
+  gap: 1px;
+}
+.animate-piano span {
+  animation: pianoWave 1s infinite;
+}
+.animate-piano span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.animate-piano span:nth-child(3) {
+  animation-delay: 0.4s;
+}

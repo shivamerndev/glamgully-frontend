@@ -6,12 +6,17 @@ import { useContext, useEffect, useState } from "react";
 import { ProductDataContext } from "../context/ProductContext";
 import HomePageLoading from "./HomePageLoading";
 import Marquee from "../components/Marquee";
+import { CustomerDataContext } from "../context/CustomerContext";
 
 const Home = ({ setAllowNav }) => {
   const { getProducts } = useContext(ProductDataContext)
+  const { getprofile, profile } = useContext(CustomerDataContext)
   const [products, setProducts] = useState(null)
 
   useEffect(() => {
+    if (profile) {
+      getprofile().catch(err => { console.log("Not Authorized.", err.response.data) })
+    }
     getProducts().then((data) => {
       if (data) {
         setProducts(data.products)
@@ -29,13 +34,13 @@ const Home = ({ setAllowNav }) => {
         <BannerCarousel />
         <Marquee />
         <CategoryPanel />
-        <FlashSale allProduct={products} />
+        <FlashSale allProduct={products} profile={profile} />
       </main>
       <footer>
         <CustomersReviews />
       </footer>
     </div>
-     : <HomePageLoading />
+    : <HomePageLoading />
   );
 };
 

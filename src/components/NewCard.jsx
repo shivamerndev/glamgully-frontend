@@ -1,12 +1,10 @@
 import { Heart, Star, ShoppingCart, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AnimatedCartButton from "./AnimatedCartButton";
-
-
 const NewCard = ({ product, wishlist, renderStars, toggleWishlist }) => {
+
     const navigate = useNavigate()
-    const ratting = product.reviews.reduce((acc, e) => acc + e?.star, 0)
-    
+
     return (
         <div onClick={(e) => {
             const tagName = e.target.tagName.toUpperCase();

@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { axiosProductInstance } from '../utils/axios.instance';
 import { createContext } from 'react'
-import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 export const ProductDataContext = createContext();
@@ -21,9 +20,10 @@ const ProductContext = ({ children }) => {
             console.log(error)
         }
     }
-    const getProducts = async (page, limit, sort) => {
+    const getProducts = async (page, limit, query) => {
+        const filters = query?.toString();
         try {
-            const response = await axiosProductInstance.get(`/getproduct?page=${page}&limit=${limit}&sort=${sort}`);
+            const response = await axiosProductInstance.get(`/getproduct?page=${page}&limit=${limit}&${filters}`);
             return (response.data);
         } catch (error) {
             console.log(error.message)
@@ -134,19 +134,10 @@ const ProductContext = ({ children }) => {
 
         }
     }
-    const ProdcutByCategory = async (category, page, limit, sort) => {
-        try {
-            const products = await axiosProductInstance.get(`/find/products/${category}`)
-            return products.data;
-        } catch (error) {
-            console.log(error.message);
-        }
-    }
-    const [lengthc, setlengthc] = useState(0)
-
+    const [lengthc, setlengthc] = useState("")
     return (
         <>
-            <ProductDataContext.Provider value={{ ProdcutByCategory, TrendingProducts, PopularProducts, categoryPublic, activeCategory, archiveCategory, categoryProduct, bestSellingProducts, lengthc, setlengthc, searchProduct, createProduct, getProducts, getProductsAdmin, singleProduct, editProduct, deleteProduct }}>
+            <ProductDataContext.Provider value={{ TrendingProducts, PopularProducts, categoryPublic, activeCategory, archiveCategory, categoryProduct, bestSellingProducts, lengthc, setlengthc, searchProduct, createProduct, getProducts, getProductsAdmin, singleProduct, editProduct, deleteProduct }}>
                 {children}
             </ProductDataContext.Provider>
         </>

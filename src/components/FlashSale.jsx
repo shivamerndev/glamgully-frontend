@@ -6,10 +6,12 @@ import { ProductDataContext } from "../context/ProductContext";
 import { IoChevronForward } from "react-icons/io5";
 import FilterSortUI from "./FilterSortUi";
 import ProgressLoader from "../utils/ProgressLoader";
+import { CustomerDataContext } from "../context/CustomerContext";
 
-const FlashSale = ({ allProduct, page }) => {
+const FlashSale = ({ allProduct, page, profile, setRemove }) => {
     const { search } = useLocation()
-    const { bestSellingProducts, getProducts , TrendingProducts, PopularProducts } = useContext(ProductDataContext)
+    const { addWishlist, removeWishlist } = useContext(CustomerDataContext)
+    const { bestSellingProducts, getProducts, TrendingProducts, PopularProducts } = useContext(ProductDataContext)
     const navigate = useNavigate()
     const [products, setProducts] = useState(null)
     const productsRef = useRef()
@@ -34,6 +36,11 @@ const FlashSale = ({ allProduct, page }) => {
     const types = ["All", "Newest", "Popular", "Trending", "Best Selling"];
 
     useEffect(() => {
+        if (profile) {
+            profile?.wishlist?.forEach(p => {
+                setWishlist(prev => ({ ...prev, [p]: true }));
+            });
+        }
         if (!search) {
             setActiveCategory("All");
             return;
@@ -59,10 +66,17 @@ const FlashSale = ({ allProduct, page }) => {
     }
 
     const toggleWishlist = (id) => {
-        setWishlist((prev) => ({
-            ...prev,
-            [id]: !prev[id],
-        }));
+        if (!profile) return navigate('user/login');
+        if (wishlist[id]) {
+            removeWishlist(id).then(res => {
+                setWishlist((prev) => ({ ...prev, [id]: false }))
+                setRemove && setRemove(res)
+            })
+        } else {
+            addWishlist(id).then(res => {
+                setWishlist((prev) => ({ ...prev, [id]: true }))
+            })
+        }
     };
 
     const renderStars = (rating) => {
@@ -122,12 +136,12 @@ const FlashSale = ({ allProduct, page }) => {
                 if (data) setProducts(data);
             },
             "Newest": async () => {
-                const data = await getProducts(1, undefined, "nto");
+                const data = await getProducts(1, 8, "sort=newest");
                 if (data) setProducts(data.products);
             },
             "Popular": async () => {
                 const data = await PopularProducts();
-                if (data) setProducts(data);                
+                if (data) setProducts(data);
             },
             "Trending": async () => {
                 const data = await TrendingProducts();
@@ -137,9 +151,7 @@ const FlashSale = ({ allProduct, page }) => {
         const handler = categoryHandlers[activeCategory];
         if (handler) handler();
         else setProducts(allProduct); // fallback
-     
     }, [activeCategory, allProduct]);
-// console.log(products);
 
     return (products ?
         <section className=" py-4 select-none px-4 lg:px-10">
@@ -167,7 +179,7 @@ const FlashSale = ({ allProduct, page }) => {
                         key={category}
                         onClick={() => {
                             setActiveCategory(category)
-                            navigate(`/?type=${category.toLowerCase()}`, { replace: true }) 
+                            navigate(`/?type=${category.toLowerCase()}`, { replace: true })
                         }}
                         className={`rounded-full cursor-pointer py-0.5 px-3 whitespace-nowrap transition-all duration-300 font-medium ${activeCategory === category
                             ? "bg-gradient-to-r from-amber-800 to-orange-700 text-white shadow-lg transform scale-105"
@@ -181,7 +193,7 @@ const FlashSale = ({ allProduct, page }) => {
             {/* Products Grid */}
             <section ref={productsRef} className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-2 lg:gap-4 ${page ? "mt-2" : "mt-6"}`}>
                 {products?.map((p, i) => (
-                    <NewCard toggleWishlist={toggleWishlist} key={i} product={p} wishlist={wishlist} renderStars={renderStars} />
+                    <NewCard profile={profile} toggleWishlist={toggleWishlist} key={i} product={p} wishlist={wishlist} renderStars={renderStars} />
                 ))}
             </section>
 
@@ -200,7 +212,7 @@ const FlashSale = ({ allProduct, page }) => {
                     View All Products
                 </Link>
             </div>}
-        </section> : <ProgressLoader response={products}/>
+        </section> : <ProgressLoader response={products} />
     );
 };
 
