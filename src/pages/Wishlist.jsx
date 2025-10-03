@@ -6,7 +6,7 @@ import { CustomerDataContext } from '../context/CustomerContext'
 const Wishlist = () => {
     const { getWishlist } = useContext(CustomerDataContext)
     const [products, setproducts] = useState(null)
-    const wishlisted = products?.map((e) => e._id) || [];
+    const [wishlisted,setWishlisted] = useState([]);
     const [remove, setRemove] = useState(null)
 
     useEffect(() => {
@@ -14,6 +14,12 @@ const Wishlist = () => {
             setproducts(res)
         }).catch(err => console.log(err.response.data))
     }, [remove])
+
+    useEffect(() => {
+        if (products) {
+            setWishlisted(products.map((e) => e._id))
+        }
+    }, [products])
 
 
     return (products && wishlisted &&

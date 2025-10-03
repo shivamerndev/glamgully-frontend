@@ -13,6 +13,7 @@ const MyOrders = () => {
   useEffect(() => {
     getOrderHistory().then(res => {
       setOrders(res);
+      console.log(res)
       setLoading(false);
     });
   }, []);
@@ -84,7 +85,7 @@ const MyOrders = () => {
     );
   }
 
-  return (
+  return ( orders &&
     <div className="min-h-screen bg-amber-50/50">
       <div className="max-w-6xl mx-auto md:px-4 px-2  py-3">
         {/* Header */}

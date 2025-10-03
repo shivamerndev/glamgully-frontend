@@ -1,19 +1,19 @@
 import { useContext, useEffect, useState } from 'react'
 import { CustomerDataContext } from '../../context/CustomerContext.jsx'
 import { useLocation, useNavigate } from 'react-router-dom'
-import ProgressLoader from '../../utils/ProgressLoader.jsx'
 
 const CustomerProtected = ({ children }) => {
     const navigate = useNavigate()
     const location = useLocation()
     const { getprofile } = useContext(CustomerDataContext)
     const [profile, setProfile] = useState(null)
-    const [Loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true)
 
 
     useEffect(() => {
         getprofile().then(res => {
             setProfile(res)
+            console.log(res)
             setLoading(false)
         }).catch(err => {
             navigate("/user/login", { replace: true, state: location })
@@ -30,11 +30,10 @@ const CustomerProtected = ({ children }) => {
         }
     }, [profile])
 
-    if (Loading) {
-        return <ProgressLoader />
+    if (!loading) {
+        return <>{children}</>
     }
 
-    return <>{children}</>
 
 }
 
