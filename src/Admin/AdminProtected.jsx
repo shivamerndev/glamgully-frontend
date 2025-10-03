@@ -17,8 +17,8 @@ const AdminProtected = ({ children }) => {
         navigate("/admin/login");
       }
     };
-    checkAuth();
-  }, [GetAdminDashboard]);
+    checkAuth()
+  }, []);
 
   if (!loading) {
     return <>{children}</>;

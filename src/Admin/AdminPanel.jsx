@@ -9,24 +9,20 @@ import { OrderDataContext } from '../context/OrderContext';
 import { getOrRenewToken, onForegroundMessage } from '../firebase.js';
 import axios from 'axios';
 import { FaShoppingBag, FaUsers, FaBoxOpen, FaRupeeSign } from "react-icons/fa";
+import { AdminDataContext } from '../context/AdminContext.jsx';
 
 
 const AdminPanel = () => {
-  const { allCustomers, createReviewImg } = useContext(CustomerDataContext)
-  const { readOrder } = useContext(OrderDataContext)
-  const [customer, setCustomer] = useState([])
+  const { createReviewImg } = useContext(AdminDataContext)
+  const [customer, setCustomer] = useState([{ fullname: "shivam verma", phone: 9955422156 }, { fullname: "Riya kumari", phone: 6512245599 }])
   const { getProductsAdmin, editProduct, categoryProduct, categoryPublic, archiveCategory, activeCategory } = useContext(ProductDataContext)
   const navigate = useNavigate()
   const [products, setProducts] = useState([])
   const [showModal, setShowModal] = useState(false);
   const [isActiveState, setIsActiveState] = useState({})
-  const [Totalorder, setTotalorder] = useState(null)
-  const [TotalSales, setTotalSales] = useState(0)
   const [category, setcategory] = useState(null)
   const [categoryp, setcategoryp] = useState(null)
   const [archive, setArchive] = useState({})
-
- 
 
   useEffect(() => {
     const setupNotifications = async () => {
@@ -53,28 +49,6 @@ const AdminPanel = () => {
       setProducts([])
     }
   }, [showModal]);
-
-  useEffect(() => {
-    // allCustomers().then(res => {
-    //   setCustomer(res)
-    // }).catch(err => {
-    //   console.log(err);
-    //   setCustomer([])
-    // })
-    readOrder().then(res => {
-      setTotalorder(res.total)
-    }).catch(err => {
-      console.log(err);
-    })
-  }, [])
-
-  useEffect(() => {
-    if (Totalorder) {
-      let sales = Totalorder?.reduce((acc, e) => acc + parseInt(e.price), 0)
-
-      setTotalSales(sales);
-    }
-  }, [Totalorder])
 
   useEffect(() => {
     categoryProduct().then(res => {
@@ -130,7 +104,6 @@ const AdminPanel = () => {
 
   return (products ?
     <div className="flex flex-col pt-19  lg:flex-row h-screen bg-gray-100">
-      <AdminNavbar focus={'Dashboard'} />
       {/* Main content */}
       <main className="flex-1  pt-15 md:p-8 overflow-y-auto">
         <h1 className="text-2xl md:text-3xl  font-semibold px-4 mb-2">Dashboard</h1>
@@ -141,7 +114,7 @@ const AdminPanel = () => {
             <p className="text-sm opacity-80 mb-2">Total Sales</p>
             <div className="flex items-center space-x-1">
               <FaRupeeSign size={25} />
-              <p className="text-2xl font-bold">{TotalSales}.00</p>
+              <p className="text-2xl font-bold">{"3533"}</p>
             </div>
           </div>
 
@@ -150,7 +123,7 @@ const AdminPanel = () => {
             <p className="text-sm opacity-80 mb-2">Total Orders</p>
             <div className="flex items-center space-x-3">
               <FaShoppingBag size={30} />
-              <p className="text-2xl font-bold">{Totalorder?.length || 0}</p>
+              <p className="text-2xl font-bold">{"453"}</p>
             </div>
           </div>
 
@@ -199,45 +172,27 @@ const AdminPanel = () => {
             border-b hover:bg-gray-100 transition-colors
             ${i % 2 === 0 ? "bg-gray-50" : "bg-white"}
             ${p.quantity <= 5 ? "bg-red-50" : ""}
-          `}
-                  >
+          `}>
                     <td className="px-2 py-3 font-medium text-gray-700">{p.title}</td>
                     <td
                       className={`px-2 py-3 font-semibold ${p.quantity <= 5 ? "text-red-600" : "text-gray-600"
-                        }`}
-                    >
+                        }`}>
                       {p.quantity < 10 ? `0${p.quantity}` : p.quantity}
                     </td>
                     <td className="px-2 py-3 text-gray-700">₹{p.price}.00</td>
                     <td
-                      onClick={() => {
-                        setIsActiveState((prev) => {
-                          const newState = {
-                            ...prev,
-                            [p._id]: !(prev[p._id] ?? p.isActive),
-                          };
-                          editProduct({
-                            ...p,
-                            isActive: !(prev[p._id] ?? p.isActive),
-                          });
-                          return newState;
-                        });
-                      }}
-                      className="px-2 py-3 cursor-pointer"
-                    >
+
+                      className="px-2 py-3 cursor-pointer">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-semibold ${(isActiveState[p._id] ?? p.isActive)
                           ? "bg-green-100 text-green-700"
                           : "bg-red-100 text-red-700"
-                          }`}
-                      >
+                          }`}>
                         {(isActiveState[p._id] ?? p.isActive) ? "Active" : "Inactive"}
                       </span>
                     </td>
-                    <td
-                      onClick={() => setShowModal({ edit: p })}
-                      className="px-2 py-3 text-blue-500 hover:text-blue-700 cursor-pointer font-medium"
-                    >
+                    <td onClick={() => setShowModal({ edit: p })}
+                      className="px-2 py-3 text-blue-500 hover:text-blue-700 cursor-pointer font-medium">
                       ✏️ Edit
                     </td>
                   </tr>
@@ -301,22 +256,14 @@ const AdminPanel = () => {
             className="h-50 w-full border border-dashed rounded-xl flex flex-col justify-center items-center cursor-pointer transition hover:border-cyan-400 hover:bg-cyan-50"
             onDrop={handleDrop}
             onDragOver={(e) => e.preventDefault()}
-            onClick={() => document.getElementById("fileInput").click()}
-          >
-            {!image ? (
-              <>
-                <h1 className="h-16 w-16 flex items-center justify-center rounded-full border-2 border-gray-400  text-3xl text-black/55 mb-3">
-                  +
-                </h1>
-                <p className="text-gray-500">Click or Drag & Drop to Upload</p>
-              </>
-            ) : (
-              <img
-                src={image}
-                alt="Preview"
-                className="max-h-10/12 max-w-full object-cover object-top rounded"
-              />
-            )}
+            onClick={() => document.getElementById("fileInput").click()}>
+            {!image ? <>
+              <h1 className="h-16 w-16 flex items-center justify-center rounded-full border-2 border-gray-400  text-3xl text-black/55 mb-3">
+                +
+              </h1>
+              <p className="text-gray-500">Click or Drag & Drop to Upload</p>
+            </> : <img src={image} alt="Preview" className="max-h-10/12 max-w-full object-cover object-top rounded" />
+            }
 
             {/* Hidden File Input */}
             <input

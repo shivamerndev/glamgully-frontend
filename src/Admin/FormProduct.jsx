@@ -8,8 +8,6 @@ const FormProduct = ({ handleBackdropClick, setShowModal, EditProduct }) => {
     const [form, setForm] = useState(data)
     const [productimg, setProductImg] = useState([])
 
-
-
     const formhandler = (e) => {
         e.preventDefault();
         const formData = new FormData();
@@ -37,7 +35,6 @@ const FormProduct = ({ handleBackdropClick, setShowModal, EditProduct }) => {
             setForm(EditProduct?.edit)
         }
     }, [EditProduct?.edit])
-
     return (
         <div id="modal-backdrop" onClick={handleBackdropClick} className="fixed inset-0 flex items-center justify-center bg-[#000000a5] bg-opacity-50 z-50">
             <div className="bg-white rounded-xl p-6 w-full max-w-md relative">

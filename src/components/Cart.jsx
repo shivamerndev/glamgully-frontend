@@ -139,7 +139,7 @@ const Cart = () => {
                                 {/* Increment */}
                                 <button
                                     onClick={async () => {
-                                        if (item.product.quantity == item.quantity) {
+                                        if (profile && item.product.quantity == item.quantity) {
                                             alert(`This Product has Only ${item.quantity} Stocks. `)
                                             return;
                                         }

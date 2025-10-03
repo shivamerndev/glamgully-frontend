@@ -27,14 +27,26 @@ import Wishlist from './pages/Wishlist.jsx'
 import CustomerProtected from './components/templates/CustomerProtected.jsx'
 import AccountSettings from './pages/Customs/AccountSettings.jsx'
 import TrackOrder from './pages/TrackOrder.jsx'
+import AdminDashboard from './Admin/AdminDashboard.jsx'
+import AddOrEdit from './Admin/AddOrEditProduct.jsx'
+import AdminNavbar from './Admin/AdminNavbar.jsx'
+import OrderDetails from './Admin/OrderDetails.jsx'
+import Messages from './Admin/Messages.jsx'
+import AdminRegister from "./Admin/AdminRegister.jsx"
+import Analytics from './Admin/Analytics.jsx'
 
 const App = () => {
   const { pathname } = useLocation()
   const { getprofile, profile } = useContext(CustomerDataContext)
   const { setlengthc, lengthc } = useContext(ProductDataContext)
   const [AllowNav, setAllowNav] = useState(false)
+  const adminRoutesNav = ["/products", "/analytics", "/dashboard", "/orders", "/customers", "/messages"]
+  const adminNav = adminRoutesNav.includes(pathname.split("/glamgully")[1])
 
   useEffect(() => {
+    if (pathname.startsWith('/admin')) {
+      return;
+    }
     getprofile().catch(err => {
       console.log(err.response.data.message);
       const cartlength = JSON.parse(localStorage.getItem("cart"))
@@ -54,25 +66,29 @@ const App = () => {
     }
   }, [lengthc])
 
-  // Define routes where navbars should not appear
-  const adminRoutes = pathname.startsWith("/admin/")
   const allowedRoutesForTopNav = ["/cart", "/about", "/wishlist", "/orders", "/account", "/product", "/category", "/checkout"]
-  const allowedRoutesForBottomNav = ["/wishlist","/about", "/orders", "/account"]
+  const allowedRoutesForBottomNav = ["/wishlist", "/about", "/orders", "/account"]
 
   return (
-    <div className={`bg-white text-black  font-[Poppins,Tangerine,sans-serif]  md:min-h-screen w-full`}>
+    <div className={`bg-white text-black  font-[Poppins,Tangerine,sans-serif] ${adminNav && "md:pl-64 md:pt-0 pt-16"} overflow-hidden md:min-h-screen w-full`}>
+
+      {adminNav && <AdminNavbar />}
       {(allowedRoutesForTopNav.includes(pathname) || AllowNav) && <Navbar />}
       {(allowedRoutesForBottomNav.includes(pathname) || AllowNav) && <BottomNavbar />}
 
       <Routes>
-        {/* <Route path='/admin/register' element={<Register />} /> */}
+        <Route path='/admin/register' element={<AdminRegister />} />
         <Route path='/admin/login' element={<AdminLogin />} />
         <Route path="/admin/glamgully" element={<OrderContext><AdminProtected><AdminPanel /></AdminProtected></OrderContext>} />
+        <Route path="/admin/glamgully/dashboard" element={<AdminProtected><AdminDashboard /></AdminProtected>} />
+        <Route path="/admin/glamgully/product/:productId" element={<AdminProtected><AddOrEdit /></AdminProtected>} />
         <Route path="/admin/glamgully/orders" element={<OrderContext><AdminProtected><OrdersPage /></AdminProtected></OrderContext>} />
+        <Route path="/admin/glamgully/orders/:orderId" element={<AdminProtected><OrderDetails /></AdminProtected>} />
         <Route path="/admin/glamgully/products" element={<AdminProtected><ProductsPage /></AdminProtected>} />
         <Route path="/admin/glamgully/customers" element={<AdminProtected><CustomersPage /></AdminProtected>} />
+        <Route path="/admin/glamgully/messages" element={<AdminProtected><Messages /></AdminProtected>} />
+        <Route path="/admin/glamgully/analytics" element={<AdminProtected><Analytics /></AdminProtected>} />
         <Route path="/" element={<Home setAllowNav={setAllowNav} />} />
-        {/* protectedroute after for state mangement cleanlly without app */}
         <Route path='/account' element={<CustomerProtected><Account /></CustomerProtected>} />
         <Route path='/about' element={<Contact />} />
         <Route path='/product/:productId' element={<ProductDetails />} />

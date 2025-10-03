@@ -2,9 +2,10 @@ import { useContext, useEffect, useState } from 'react';
 import { Package, Clock, CheckCircle, Truck, Calendar, MapPin, Star, ChevronRight, Eye, RotateCcw } from 'lucide-react';
 import { CustomerDataContext } from '../context/CustomerContext';
 import { useNavigate } from 'react-router-dom';
+import { handlePayment } from './Payment';
 
 const MyOrders = () => {
-  const { getOrderHistory } = useContext(CustomerDataContext);
+  const { getOrderHistory, createReOrder } = useContext(CustomerDataContext);
   const [orders, setOrders] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate()
@@ -147,91 +148,33 @@ const MyOrders = () => {
                     </div>
                   </div>
                 </div>
-                {/* Order Items */}
-                <div className="px-2 py-4">
-                  <div className="space-y-2">
-                    {order.items.map((item) => (
-                      <div key={item._id} className="flex gap-4 p-1 bg-amber-50/50 rounded-2xl border border-amber-100 hover:bg-amber-50 transition-colors">
-                        {/* Product Image */}
-                        <div className="relative flex-shrink-0">
-                          <img src={item.product.productimage[0]}
-                            alt={item?.product.title}
-                            className="w-20 h-20 object-cover rounded-xl border-2 border-amber-200" />
-                          {item.quantity > 0 && (
-                            <span className="absolute -top-2 -right-2 bg-amber-600 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center font-bold">
-                              {item.quantity}
-                            </span>
-                          )}
-                        </div>
 
-                        {/* Product Details */}
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-amber-900 mb-1 line-clamp-2">
-                            {item.product.title}
-                          </h4>
-                          <div className="flex items-center gap-3 mb-2">
-                            <span className="text-lg font-bold text-amber-800">
-                              ₹{item.price}
-                            </span>
-                            {item.discount > 0 && (
-                              <span className="bg-green-100 text-green-700 px-2 py-1 rounded-lg text-xs font-semibold">
-                                {item.product.discount}% OFF
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-4 text-sm text-amber-600 whitespace-nowrap">
-                            <span>Category: {item.product.category}</span>
-                            {item.ratings > 0 && (
-                              <div className="flex items-center gap-1">
-                                <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                                <span>{item.ratings} ({item.reviewsCount} reviews)</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="flex flex-col gap-2">
-                          <button onClick={() => navigate(`/product/${item.product._id}`)} className="px-4 py-2 bg-amber-100 text-amber-800 rounded-xl text-sm font-medium hover:bg-amber-200 transition-colors flex items-center gap-1">
-                            <Eye className="w-4 h-4" />
-                            View
-                          </button>
-                          {order.status === 'delivered' && (
-                            <button onClick={() => navigate(`/product/${item.product._id}`, { state: true })} className="px-4 py-2 bg-green-100 text-green-800 rounded-xl text-sm font-medium hover:bg-green-200 transition-colors flex items-center gap-1">
-                              <Star className="w-4 h-4" />
-                              Review
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Order Actions */}
-                  <div className="mt-2 flex flex-wrap gap-3 justify-between items-center pt-2 border-t border-amber-100">
-                    <div className="flex gap-3">
-                      <button onClick={() => navigate(`/track/orders/${order._id}`)} className="px-4 py-2 bg-amber-600 text-white rounded-xl font-semibold hover:bg-amber-700 transition-all transform hover:scale-105 flex items-center gap-2">
-                        <Eye className="w-4 h-4" />
-                        Track Order
+                {/* Order Actions */}
+                <div className=" flex flex-wrap gap-3 justify-between items-center py-2 px-4 border-t border-amber-100">
+                  <div className="flex gap-3">
+                    <button onClick={() => navigate(`/track/orders/${order._id}`)} className="px-4 py-2 bg-amber-600 text-white rounded-xl font-semibold hover:bg-amber-700 transition-all transform hover:scale-105 flex items-center gap-2">
+                      <Eye className="w-4 h-4" />
+                      Track Order
+                    </button>
+                    {order.status === 'delivered' && (
+                      <button onClick={() => {
+                        const func = async () => {
+                          setLoading(true)
+                          await createReOrder(order._id);
+                          getOrderHistory().then(res => {
+                            setOrders(res);
+                            setLoading(false);
+                          });
+                        }
+                        handlePayment(order.totalAmount, func)
+                      }} className="px-4 py-2 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-all transform hover:scale-105 flex items-center gap-2">
+                        <RotateCcw className="w-4 h-4" />
+                        Reorder
                       </button>
-                      {order.status === 'delivered' && (
-                        <button onClick={() => {
-                          const newarr = order.items.map(p => {
-                            let obj = {}
-                            obj = { ...p.product, quantity: p.quantity }
-                            return obj
-                          })
-                          localStorage.setItem("cart", JSON.stringify(newarr))
-                          navigate("/cart")
-                        }} className="px-4 py-2 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-all transform hover:scale-105 flex items-center gap-2">
-                          <RotateCcw className="w-4 h-4" />
-                          Reorder
-                        </button>
-                      )}
-                    </div>
-                    <div className="text-sm text-amber-600">
-                      Last updated: {formatDate(order.updatedAt)}
-                    </div>
+                    )}
+                  </div>
+                  <div className="text-sm text-amber-600">
+                    Last updated: {formatDate(order.updatedAt)}
                   </div>
                 </div>
               </div>

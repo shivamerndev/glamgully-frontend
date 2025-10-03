@@ -93,6 +93,10 @@ const CustomerContext = ({ children }) => {
         const res = await axiosCustomerInstance.post("/order", data)
         return (res.data)
     })
+    const createReOrder = HandleError(async (orderId) => {
+        const res = await axiosCustomerInstance.post("/reorder", {orderId})
+        return (res.data)
+    })
     const getOrderHistory = HandleError(async () => {
         const res = await axiosCustomerInstance.get("/orders")
         return (res.data)
@@ -101,35 +105,9 @@ const CustomerContext = ({ children }) => {
         const res = await axiosCustomerInstance.get(`/order/${orderId}`)
         return (res.data)
     })
-
-
-    const createReviewImg = async (file) => {
-        try {
-            const formData = new FormData();
-            formData.append("reviewimg", file); // backend me req.file naam ka milega
-
-            const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/img/review/create`, formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            }
-            );
-            return (res.data);
-        } catch (error) {
-            console.log(error);
-        }
-    }
-    const readReviewsImg = async () => {
-        try {
-            const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/img/review/read`);
-            return (res.data);
-        } catch (error) {
-            console.log(error.message);
-        }
-    }
     return (
         <>
-            <CustomerDataContext.Provider value={{ getOrderDetails, getOrderHistory, createOrderWithCart, createOrder, profile, syncCartToDB, updatePassword, deleteAddress, editAddress, addAddress, getAddresses, getCartItems, removeFromCart, updateCart, addToCart, removeWishlist, addWishlist, getWishlist, logout, updateProfile, getprofile, login, register, readReviewsImg, createReviewImg }}>
+            <CustomerDataContext.Provider value={{createReOrder, getOrderDetails, getOrderHistory, createOrderWithCart, createOrder, profile, syncCartToDB, updatePassword, deleteAddress, editAddress, addAddress, getAddresses, getCartItems, removeFromCart, updateCart, addToCart, removeWishlist, addWishlist, getWishlist, logout, updateProfile, getprofile, login, register }}>
                 {children}
             </CustomerDataContext.Provider>
         </>

@@ -28,15 +28,10 @@ const handlePaymentVerify = (data, CreateOrderFunction) => {
                     amount: data.amount,
                 });
                 CreateOrderFunction()
-                // editQuantity();
             } catch (error) {
                 console.error("Payment verification failed:", error);
             }
         },
-        // prefill: {
-        //     email:, // Optional
-        //     contact:, // Optional
-        // },
         notes: {
             note: "Don't Address Saved here",
         },

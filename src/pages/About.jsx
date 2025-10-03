@@ -187,8 +187,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-amber-900 mb-2">Call Us</h3>
-                  <p className="text-amber-700 mb-1">Customer Support: <a href="tel:+918001234567" className="font-semibold hover:text-amber-800">+91 800-123-4567</a></p>
-                  <p className="text-amber-700">Business Inquiries: <a href="tel:+918001234568" className="font-semibold hover:text-amber-800">+91 800-123-4568</a></p>
+                  <p className="text-amber-700 mb-1">Customer Support: <a href="tel:+918001234567" className="font-semibold hover:text-amber-800">+91 890-123-4567</a></p>
+                  <p className="text-amber-700">Business Inquiries: <a href="tel:+918001234568" className="font-semibold hover:text-amber-800">+91 890-123-4568</a></p>
                 </div>
               </div>
             </div>
@@ -214,11 +214,7 @@ const Contact = () => {
                 <div>
                   <h3 className="text-lg font-bold text-amber-900 mb-2">Address</h3>
                   <p className="text-amber-700">
-                    Taloja,
-                    Phase-2
-                    <br />Titanium Woods,<br />
-                    Mumbai, Maharastra - 800001<br />
-                    India
+                   Navi Mumbai<br /> Maharastra, India- 800001
                   </p>
                 </div>
               </div>

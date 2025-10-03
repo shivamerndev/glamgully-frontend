@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import {
     Package,
+    Clock,
+    CheckCircle,
     Truck,
+    Calendar,
     MapPin,
     Phone,
-    Calendar,
     ArrowLeft,
     Copy,
     ExternalLink,
@@ -13,7 +15,13 @@ import {
     Box,
     Check,
     Bike,
+    RotateCcw,
+    Cross,
+    CrossIcon,
 } from 'lucide-react';
+
+
+
 import { BsInstagram, BsWhatsapp } from 'react-icons/bs';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CustomerDataContext } from '../context/CustomerContext';
@@ -38,51 +46,61 @@ const TrackOrder = () => {
             const currentStatus = orderData.status.toLowerCase();
             const statusMap = {
                 'pending': 0,
-                'processing': 1,
-                'shipped': 2,
-                'out for delivery': 3,
-                'delivered': 4,
+                "confirmed": 1,
+                'processing': 2,
+                'shipped': 3,
+                'out for delivery': 4,
+                'delivered': 5,
+                'cancelled': 3
             };
             const currentStep = statusMap[currentStatus] || 0;
             setTimeline([
                 {
                     status: "Order Placed",
-                    description: "We've received your order",
+                    description: "We've received your order.",
                     timestamp: orderData.createdAt,
                     completed: true, // First step is always completed
                     current: currentStep === 0,
                     icon: ShoppingBag
                 },
                 {
-                    status: "Processing",
-                    description: "Your order is being prepared",
+                    status: "Confirmed",
+                    description: "Your order has been Confirmed.",
                     timestamp: currentStep > 0 ? orderData.updatedAt : null,
                     completed: currentStep > 0,
                     current: currentStep === 1,
                     icon: Box
                 },
                 {
-                    status: "Shipped",
-                    description: "Your package is on its way",
+                    status: "Processing",
+                    description: "Your order is being prepared.",
                     timestamp: currentStep > 1 ? orderData.updatedAt : null,
                     completed: currentStep > 1,
                     current: currentStep === 2,
+                    icon: Box
+                },
+                {
+                    status: orderData.status === 'cancelled' ? "Cancelled" : "Shipped",
+                    description: orderData.status === 'cancelled' ? "Your order has been Cancelled."  : "Your package is on its way.",
+                    timestamp: currentStep > 2 ? orderData.updatedAt : null,
+                    completed: currentStep > 2,
+                    current: currentStep === 3,
                     icon: Truck
                 },
                 {
                     status: "Out for Delivery",
-                    description: "Your package is out for Delivery",
-                    timestamp: currentStep > 2 ? orderData.updatedAt : null,
-                    completed: currentStep > 2,
-                    current: currentStep === 3,
+                    description: "Your package is out for Delivery.",
+                    timestamp: currentStep > 3 ? orderData.updatedAt : null,
+                    completed: currentStep > 3,
+                    current: currentStep === 4,
                     icon: Bike
                 },
                 {
                     status: "Delivered",
-                    description: "Package has been delivered",
-                    timestamp: currentStep > 3 ? orderData.updatedAt : null,
-                    completed: currentStep === 4,
-                    current: currentStep === 4,
+                    description: "Package has been delivered.",
+                    timestamp: currentStep > 4 ? orderData.updatedAt : null,
+                    completed: currentStep === 5,
+                    current: currentStep === 5,
                     icon: Check
                 }
             ]);
@@ -97,6 +115,40 @@ const TrackOrder = () => {
             hour: '2-digit',
             minute: '2-digit'
         });
+    };
+
+    const getStatusColor = (status) => {
+        switch (status.toLowerCase()) {
+            case 'pending':
+                return 'bg-amber-100 text-amber-800 border-amber-300';
+            case 'processing':
+                return 'bg-blue-100 text-blue-800 border-blue-300';
+            case 'shipped':
+                return 'bg-purple-100 text-purple-800 border-purple-300';
+            case 'delivered':
+                return 'bg-green-100 text-green-800 border-green-300';
+            case 'cancelled':
+                return 'bg-red-100 text-red-800 border-red-300';
+            default:
+                return 'bg-gray-100 text-gray-800 border-gray-300';
+        }
+    };
+
+    const getStatusIcon = (status) => {
+        switch (status.toLowerCase()) {
+            case 'pending':
+                return <Clock className="w-4 h-4" />;
+            case 'processing':
+                return <Package className="w-4 h-4" />;
+            case 'shipped':
+                return <Truck className="w-4 h-4" />;
+            case 'delivered':
+                return <CheckCircle className="w-4 h-4" />;
+            case 'cancelled':
+                return <Cross className="w-4 h-4 rotate-45" />;
+            default:
+                return <Package className="w-4 h-4" />;
+        }
     };
 
     const copyToClipboard = (text) => {
@@ -159,24 +211,23 @@ const TrackOrder = () => {
                     <div className="lg:col-span-2 space-y-6">
                         {/* Order Status Card */}
                         <div className="bg-white rounded-3xl shadow-xl md:p-8 p-4 border border-amber-200/50">
-                            <div className="flex flex-wrap justify-between items-start gap-4 mb-8">
+                            <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
                                 <div>
                                     <h2 className="text-xl whitespace-nowrap mb-1 font-semibold text-amber-900">
                                         Order #{orderId.slice(-10)}
                                     </h2>
                                     <div className="flex items-center gap-2 mb-3">
-                                        <span className="bg-gradient-to-r from-amber-100 to-orange-100 text-amber-800 px-4 py-1 rounded-full font-semibold text-sm border border-amber-300 capitalize">
-                                            <Truck className="w-4 h-4 inline mr-2" />
-                                            {orderData.status}
+                                        <span className={`bg-gradient-to-r flex items-center gap-2 ${getStatusColor(orderData.status)} px-4 py-1 rounded-full font-semibold text-sm border border-amber-300 capitalize`}>
+                                            {getStatusIcon(orderData.status)}{orderData.status}
                                         </span>
                                     </div>
-                                    <div className="flex items-center gap-2 text-amber-700">
+                                    {orderData.status !== 'delivered' && <div className="flex items-center gap-2 text-amber-700">
                                         <Calendar className="w-4 h-4" />
                                         <span className="font-medium">Expected Delivery: <span className='whitespace-nowrap'>{formatDate(new Date(new Date(orderData.updatedAt).setDate(
                                             new Date(orderData.createdAt).getDate() + 5
                                         )))}</span>
                                         </span>
-                                    </div>
+                                    </div>}
                                 </div>
                                 <div className="md:text-right text-center">
                                     <div className="text-xl font-bold text-amber-900">₹{orderData.totalAmount.toLocaleString()}</div>
@@ -204,19 +255,19 @@ const TrackOrder = () => {
                                 <h3 className="text-xl font-bold text-amber-900 mb-3">Order Timeline</h3>
                                 <div className="relative">
                                     {/* Timeline Line */}
-                                    <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-amber-200"></div>
-                                    {/* Active Timeline Line */}
-                                    <div
-                                        className="absolute left-6 top-0 w-0.5 bg-amber-500 transition-all duration-500"
-                                        style={{
-                                            height: `${timeline?.findIndex(t => t.current) * 25}%`,
-                                            opacity: timeline?.some(t => t.current) ? 1 : 0
-                                        }}></div>
+                                    <div className="absolute h-[95%] left-6 top-0 w-0.5   bg-amber-200">
+                                        {/* Active Timeline Line */}
+                                        <div className="  w-0.5 bg-amber-500 transition-all duration-500"
+                                            style={{
+                                                height: `${timeline?.findIndex(t => t.current) * 20}%`,
+                                                opacity: timeline?.some(t => t.current) ? 1 : 0
+                                            }}></div>
+                                    </div>
 
                                     {/* Timeline Steps */}
                                     {timeline?.map((step, index) => <div key={index} className="relative flex items-start gap-4 pb-8 last:pb-0">
                                         {/* Icon */}
-                                        <div className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center border-4 transition-all duration-300 ${step.completed
+                                        <div className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center border-4 transition-all duration-300  ${step.completed
                                             ? 'bg-gradient-to-r from-amber-500 to-amber-600 border-amber-200 text-white'
                                             : step.current
                                                 ? 'bg-white border-amber-500 text-amber-600 ring-4 ring-amber-200'
@@ -235,12 +286,12 @@ const TrackOrder = () => {
                                                 }`}>
                                                 {step.status}
                                             </div>
-                                            <p className={`text-sm mt-1 ${step.completed || step.current ? 'text-amber-700' : 'text-gray-400'
+                                            <p className={`text-sm mt-1 ${step.completed || step.current ? 'text-amber-800' : 'text-gray-400'
                                                 }`}>
                                                 {step.description}
                                             </p>
                                             {step.timestamp && (
-                                                <p className="text-xs text-amber-600 mt-2 font-medium">
+                                                <p className="text-xs text-amber-700  font-medium">
                                                     {formatDate(step.timestamp)}
                                                 </p>
                                             )}
