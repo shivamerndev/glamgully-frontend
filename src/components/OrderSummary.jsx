@@ -11,9 +11,9 @@ const OrderSummary = ({ toggleHandle, isOpen = true }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const { productId } = useParams()
-    const { singleProduct, editProduct } = useContext(ProductDataContext)
-    const { createOrders, sendNotification } = useContext(OrderDataContext);
-    const { getCartItems, createOrder, createOrderWithCart, profile } = useContext(CustomerDataContext);
+    const { singleProduct } = useContext(ProductDataContext)
+    const { sendNotification } = useContext(OrderDataContext);
+    const { getCartItems, createOrder, createOrderWithCart } = useContext(CustomerDataContext);
     const [product, setproduct] = useState(null)
     const [amount, setamount] = useState()
     const [buyquantity, setbuyquantity] = useState(1)

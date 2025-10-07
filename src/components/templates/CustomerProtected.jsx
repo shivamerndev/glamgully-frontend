@@ -8,7 +8,7 @@ const CustomerProtected = ({ children }) => {
     const location = useLocation()
     const { getprofile } = useContext(CustomerDataContext)
     const [profile, setProfile] = useState(null)
-    const [Loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true)
 
 
     useEffect(() => {
@@ -30,7 +30,7 @@ const CustomerProtected = ({ children }) => {
         }
     }, [profile])
 
-    if (Loading) {
+    if (loading) {
         return <ProgressLoader />
     }
 

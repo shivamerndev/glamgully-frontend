@@ -48,7 +48,6 @@ const AccountSettings = () => {
     };
     const handleProfileSave = () => {
         if (changed) {
-            console.log(changed)
             updateProfile(changed)
         }
     };
