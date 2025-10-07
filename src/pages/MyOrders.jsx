@@ -15,7 +15,7 @@ const MyOrders = () => {
       setOrders(res);
       setLoading(false);
     }).catch(err => {
-      console.error(err.response ? err.response.data.message : err);
+     console.error( err.response ? err.response.data.message : err )
     });
   }, []);
 

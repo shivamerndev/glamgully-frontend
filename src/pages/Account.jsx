@@ -42,9 +42,7 @@ const Account = () => {
               <button onClick={() => {
                 logout().then(res => {
                   toast.success(res)
-                  setTimeout(() => {
-                    navigate('/user/login', { replace: true });
-                  }, 1000);
+                  navigate('/user/login', { replace: true });
                 })
               }} className='bg-gradient-to-tr self-center md:ml-auto cursor-pointer from-amber-500 to-red-500 px-4 py-0.5 rounded-full font-semibold text-amber-50 '>Logout</button>
             </div>

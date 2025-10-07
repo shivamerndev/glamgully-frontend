@@ -59,7 +59,11 @@ const ProductDetails = () => {
     const [popupImg, setPopupImg] = useState(true)
 
     useEffect(() => {
+<<<<<<< HEAD
         if (profile) {
+=======
+        if (profile) {   
+>>>>>>> a1b53c0117a5eb4a0809ee4ddaa6704036f5435a
             setWishlist(profile.wishlist.includes(productId))
         }
     }, [profile])

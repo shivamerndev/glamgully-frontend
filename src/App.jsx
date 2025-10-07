@@ -79,10 +79,10 @@ const App = () => {
       <Routes>
         <Route path='/admin/register' element={<AdminRegister />} />
         <Route path='/admin/login' element={<AdminLogin />} />
-        <Route path="/admin/glamgully" element={<OrderContext><AdminProtected><AdminPanel /></AdminProtected></OrderContext>} />
+        <Route path="/admin/glamgully" element={<AdminProtected><AdminPanel /></AdminProtected>} />
         <Route path="/admin/glamgully/dashboard" element={<AdminProtected><AdminDashboard /></AdminProtected>} />
         <Route path="/admin/glamgully/product/:productId" element={<AdminProtected><AddOrEdit /></AdminProtected>} />
-        <Route path="/admin/glamgully/orders" element={<OrderContext><AdminProtected><OrdersPage /></AdminProtected></OrderContext>} />
+        <Route path="/admin/glamgully/orders" element={<AdminProtected><OrdersPage /></AdminProtected>} />
         <Route path="/admin/glamgully/orders/:orderId" element={<AdminProtected><OrderDetails /></AdminProtected>} />
         <Route path="/admin/glamgully/products" element={<AdminProtected><ProductsPage /></AdminProtected>} />
         <Route path="/admin/glamgully/customers" element={<AdminProtected><CustomersPage /></AdminProtected>} />
@@ -92,10 +92,10 @@ const App = () => {
         <Route path='/account' element={<CustomerProtected><Account /></CustomerProtected>} />
         <Route path='/about' element={<Contact />} />
         <Route path='/product/:productId' element={<ProductDetails />} />
-        <Route path='/checkout/cart' element={<CustomerProtected><OrderContext><CheckoutForm /></OrderContext></CustomerProtected>} />
-        <Route path='/checkout/:productId' element={<CustomerProtected><OrderContext><CheckoutForm /></OrderContext></CustomerProtected>} />
-        <Route path='/checkout/order/:productId' element={<CustomerProtected><OrderContext><OrderSummary /></OrderContext></CustomerProtected>} />
-        <Route path='/checkout/order/cart' element={<CustomerProtected><OrderContext><OrderSummary /></OrderContext></CustomerProtected>} />
+        <Route path='/checkout/cart' element={<CustomerProtected><CheckoutForm /></CustomerProtected>} />
+        <Route path='/checkout/:productId' element={<CustomerProtected><CheckoutForm /></CustomerProtected>} />
+        <Route path='/checkout/order/:productId' element={<CustomerProtected><OrderSummary /></CustomerProtected>} />
+        <Route path='/checkout/order/cart' element={<CustomerProtected><OrderSummary /></CustomerProtected>} />
         <Route path='/product/all' element={<AllProductsPage />} />
         <Route path='/cart' element={<Cart />} />
         <Route path='/wishlist' element={<CustomerProtected><Wishlist /></CustomerProtected>} />
