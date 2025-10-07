@@ -2,10 +2,7 @@ import { useContext, useEffect, useState } from 'react'
 import { ProductDataContext } from "../context/ProductContext";
 import FormProduct from './FormProduct';
 import Loader from '../../src/assets/loader.gif';
-import AdminNavbar from './AdminNavbar';
 import { useNavigate } from 'react-router-dom';
-import { CustomerDataContext } from '../context/CustomerContext'
-import { OrderDataContext } from '../context/OrderContext';
 import { getOrRenewToken, onForegroundMessage } from '../firebase.js';
 import axios from 'axios';
 import { FaShoppingBag, FaUsers, FaBoxOpen, FaRupeeSign } from "react-icons/fa";
@@ -15,7 +12,7 @@ import { AdminDataContext } from '../context/AdminContext.jsx';
 const AdminPanel = () => {
   const { createReviewImg } = useContext(AdminDataContext)
   const [customer, setCustomer] = useState([{ fullname: "shivam verma", phone: 9955422156 }, { fullname: "Riya kumari", phone: 6512245599 }])
-  const { getProductsAdmin, editProduct, categoryProduct, categoryPublic, archiveCategory, activeCategory } = useContext(ProductDataContext)
+  const { getProductsAdmin, categoryProduct, categoryPublic, archiveCategory, activeCategory } = useContext(ProductDataContext)
   const navigate = useNavigate()
   const [products, setProducts] = useState([])
   const [showModal, setShowModal] = useState(false);

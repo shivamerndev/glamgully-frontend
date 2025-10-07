@@ -16,7 +16,6 @@ import Cart from './components/Cart.jsx'
 import { ProductDataContext } from './context/ProductContext.jsx'
 import ProductsPage from './Admin/ProductsPage.jsx'
 import CustomersPage from './Admin/CustomersPage.jsx'
-import OrderContext from './context/OrderContext.jsx'
 import OrdersPage from './Admin/OrdersPage.jsx'
 import BottomNavbar from './components/BottomNavbar.jsx'
 import "@flaticon/flaticon-uicons/css/all/all.css";

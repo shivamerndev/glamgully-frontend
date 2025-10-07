@@ -94,8 +94,12 @@ const CustomerContext = ({ children }) => {
         return (res.data)
     })
     const createReOrder = HandleError(async (orderId) => {
-        const res = await axiosCustomerInstance.post("/reorder", {orderId})
+        const res = await axiosCustomerInstance.post("/reorder", { orderId })
         return (res.data)
+    })
+    const sendNotification = HandleError(async (data) => {
+        const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/send-notification`, data)
+        return (res.data);
     })
     const getOrderHistory = HandleError(async () => {
         const res = await axiosCustomerInstance.get("/orders")
@@ -107,7 +111,7 @@ const CustomerContext = ({ children }) => {
     })
     return (
         <>
-            <CustomerDataContext.Provider value={{createReOrder, getOrderDetails, getOrderHistory, createOrderWithCart, createOrder, profile, syncCartToDB, updatePassword, deleteAddress, editAddress, addAddress, getAddresses, getCartItems, removeFromCart, updateCart, addToCart, removeWishlist, addWishlist, getWishlist, logout, updateProfile, getprofile, login, register }}>
+            <CustomerDataContext.Provider value={{sendNotification, createReOrder, getOrderDetails, getOrderHistory, createOrderWithCart, createOrder, profile, syncCartToDB, updatePassword, deleteAddress, editAddress, addAddress, getAddresses, getCartItems, removeFromCart, updateCart, addToCart, removeWishlist, addWishlist, getWishlist, logout, updateProfile, getprofile, login, register }}>
                 {children}
             </CustomerDataContext.Provider>
         </>

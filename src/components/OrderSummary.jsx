@@ -3,7 +3,6 @@ import { ProductDataContext } from "../context/ProductContext";
 import { CustomerDataContext } from "../context/CustomerContext";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { handlePayment } from "../pages/Payment";
-import { OrderDataContext } from "../context/OrderContext";
 import { ChevronDown, CreditCard, Info, Package, Tag, Truck } from "lucide-react"
 
 
@@ -12,8 +11,7 @@ const OrderSummary = ({ toggleHandle, isOpen = true }) => {
     const location = useLocation();
     const { productId } = useParams()
     const { singleProduct } = useContext(ProductDataContext)
-    const { sendNotification } = useContext(OrderDataContext);
-    const { getCartItems, createOrder, createOrderWithCart } = useContext(CustomerDataContext);
+    const { getCartItems, createOrder, createOrderWithCart, sendNotification } = useContext(CustomerDataContext);
     const [product, setproduct] = useState(null)
     const [amount, setamount] = useState()
     const [buyquantity, setbuyquantity] = useState(1)
