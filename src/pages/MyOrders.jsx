@@ -14,6 +14,8 @@ const MyOrders = () => {
     getOrderHistory().then(res => {
       setOrders(res);
       setLoading(false);
+    }).catch(err => {
+      console.error(err.response ? err.response.data.message : err);
     });
   }, []);
 

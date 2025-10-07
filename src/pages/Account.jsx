@@ -1,18 +1,13 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CustomerDataContext } from '../context/CustomerContext'
-import { User, Mail, Phone, Calendar, Heart, ShoppingBag, MapPin, Settings, Crown, Gem } from 'lucide-react'
+import {  Mail, Phone, Calendar, Heart, ShoppingBag, MapPin, Settings, Crown } from 'lucide-react'
 import ProgressLoader from '../utils/ProgressLoader'
 import { toast, ToastContainer } from 'react-toastify'
-import AccountSettings from './Customs/AccountSettings'
 
 const Account = () => {
-  const { logout, getprofile, profile } = useContext(CustomerDataContext)
+  const { logout, profile } = useContext(CustomerDataContext)
   const navigate = useNavigate()
-
-  // useEffect(() => {
-  //   getprofile().catch(err => navigate('/user/login', { replace: true }))
-  // }, [])
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })

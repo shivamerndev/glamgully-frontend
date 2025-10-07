@@ -41,7 +41,7 @@ const ProductsPage = () => {
                 </div>
                 <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-amber-50 rounded-full p-1.5 flex items-center justify-center">
-                        <BellRingIcon className='text-amber-600' />>10
+                        <BellRingIcon className='text-amber-600' />{">10"}
                     </div>
                     <div className="w-8 h-8 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full">
                         <img src="/default.png" alt="admin" />
